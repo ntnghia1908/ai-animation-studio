@@ -33,7 +33,7 @@ Thay đổi framework sau adoption ghi ở `docs/ai/framework-history.md`.
 ## Adoption boundary
 
 - Adoption **không** authorize implementation của bất kỳ module nào (M1–M10), không duyệt architecture, dependency, dịch vụ ngoài hay chi tiêu.
-- Adoption không duyệt Implementation Authorization Boundary P1. Bản nháp nằm ở `docs/decisions/P1-IMPLEMENTATION-AUTHORIZATION-DRAFT.md` (Status PROPOSED).
+- Adoption không duyệt Implementation Authorization Boundary nào. Thứ tự và trạng thái: `docs/decisions/ADR-001-mvp-architecture-and-phasing.md`; bản nháp P0.1 / P1a ở `docs/decisions/` (PROPOSED).
 - Không sửa Framework Core. Rule riêng project đặt ở `docs/ai/project-profile.md` hoặc decision record.
 
 ## Verification status

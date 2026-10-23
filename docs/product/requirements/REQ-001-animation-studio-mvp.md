@@ -226,5 +226,5 @@ Readiness: NEEDS_CLARIFICATION
 
 - Source idea / request: HUMAN LEAD kickoff "AI Animation Studio — Master Project Kickoff" (2026-10-23), §2, §5, §6, §9.
 - Parent requirement: None
-- Generated tasks: None
+- Generated tasks: None (P1a dùng một phần FR / AC — `docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md` §7)
 - Notes: research inputs in `docs/research/`; architecture options in `docs/architecture/ARCHITECTURE_PROPOSAL.md` (không thuộc requirement).

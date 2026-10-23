@@ -2,12 +2,14 @@
 
 | Metadata | Value |
 |---|---|
-| Status | PROPOSAL — NOT ACCEPTED |
+| Status | PROPOSAL — hướng Option A ACCEPTED (ADR-001); thiết kế chi tiết §7 vẫn là đề xuất |
 | Date | 2026-10-23 |
 | Requirement | `docs/product/requirements/REQ-001-animation-studio-mvp.md` (NEEDS_CLARIFICATION) |
 | Task | `docs/tasks/P0-research-bootstrap.md` |
 
-Không có mục nào trong file này là decision. Mục "Đề xuất" chỉ là khuyến nghị của ORCHESTRATOR. Decision cần HUMAN LEAD được đánh số D-xx và tổng hợp ở `docs/decisions/P1-IMPLEMENTATION-AUTHORIZATION-DRAFT.md` §6. Khi HUMAN LEAD chấp thuận, phần tương ứng chuyển thành decision record `ACCEPTED` riêng.
+**Cập nhật 2026-10-23:** HUMAN LEAD chọn Option A (`docs/decisions/ADR-001-mvp-architecture-and-phasing.md`), kèm ràng buộc: không xây đủ M1–M10 và Web UI hoàn chỉnh trước khi có phim mẫu đạt chất lượng. Các mục dưới đây ngoài lựa chọn Option A vẫn chỉ là đề xuất.
+
+Không có mục nào trong file này là decision (trừ phần đã chuyển vào ADR-001). Mục "Đề xuất" chỉ là khuyến nghị của ORCHESTRATOR. Decision cần HUMAN LEAD được đánh số D-xx và theo dõi trạng thái ở `docs/decisions/ADR-001-mvp-architecture-and-phasing.md` A5. Khi HUMAN LEAD chấp thuận, phần tương ứng chuyển thành decision record `ACCEPTED` riêng.
 
 ## 1. Driver kiến trúc
 

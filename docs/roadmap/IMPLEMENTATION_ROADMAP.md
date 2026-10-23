@@ -2,37 +2,42 @@
 
 | Metadata | Value |
 |---|---|
-| Status | PROPOSAL — NOT AUTHORITY |
+| Status | PROPOSAL — NOT AUTHORITY (thứ tự phase: ADR-001 A4) |
 | Date | 2026-10-23 |
-| Basis | Kickoff §10; `docs/architecture/ARCHITECTURE_PROPOSAL.md` (Option A, chưa duyệt) |
+| Basis | Kickoff §10; `docs/architecture/ARCHITECTURE_PROPOSAL.md`; Option A đã chọn (`docs/decisions/ADR-001-mvp-architecture-and-phasing.md`) |
 
 Mỗi phase cần authorization riêng của HUMAN LEAD. Roadmap này không authorize phase nào. Checkpoint và task cụ thể sẽ được lập thành task contract sau khi boundary của phase được duyệt.
 
-## P0 — Research & Framework Bootstrap (đang ở gate review)
+## P0 — Research & Framework Bootstrap (đã review)
 
-Deliverable: 11 tài liệu của kickoff §12 cộng task contract `docs/tasks/P0-research-bootstrap.md`. Gate: **P0 READY FOR HUMAN REVIEW — P1 NOT YET AUTHORIZED**.
+Deliverable: 11 tài liệu của kickoff §12 cộng task contract `docs/tasks/P0-research-bootstrap.md` (PR #1). HUMAN LEAD review 2026-10-23: chấp nhận research + hướng Option A; tách P1 thành P0.1 → P1a → P1b (ADR-001).
 
-## P0.5 — Experiments không tốn phí (đề xuất, chạy song song đầu P1)
+## P0.1 — Checker fix, quality gate, CI (kế tiếp)
 
-E1 (FFmpeg camera / parallax), E4 (TTS tiếng Việt), E5 (lip-sync tối thiểu) chạy trên laptop. E2 / E3 (Wan, Qwen-Image-Edit) chạy trên GPU server khi D-07 được xác nhận. Kết quả ghi vào `docs/research/experiments/`. Đây là việc **nghiên cứu**, không phải code sản phẩm; vẫn cần HUMAN LEAD cho phép vì cài model / phần mềm.
+Sửa `product-check.mjs`, thêm `scripts/quality-gate.mjs` + test `node --test`, CI GitHub Actions trên PR, cài `requirement-to-task.yml`. Boundary nháp: `docs/decisions/P0.1-QUALITY-GATE-AUTHORIZATION-DRAFT.md`; task: `docs/tasks/P0.1-checker-quality-gate-ci.md`.
 
-## P1 — Offline MVP (animatic-first, không cần GPU, không trả phí)
+## P1a — Offline vertical slice (rất nhỏ)
 
-Mục tiêu: đi hết quy trình tới MP4 cho pilot bằng phương thức 1 (still + camera) và 5 (nhập tay).
+Nhập truyện + ảnh / layer + giọng (nhập tay) → `shots.json` → animatic → một đoạn phim 30–60 s có chuyển động (camera move, 1 shot parallax, transition, phụ đề, nhạc nền). Chỉ CLI + FFmpeg; không Web UI, không AI provider, không GPU. Exit = quality gate tự động + HUMAN LEAD chấm điểm video. Boundary nháp: `docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md`.
 
-| Checkpoint | Nội dung | Module |
-|---|---|---|
-| P1.0 | Skeleton package, config, storage (atomic IO, hashing), test guard; pilot S1 của framework | storage |
-| P1.1 | Story Library + Adaptation revision (nhập tay / LLM Ollama tùy chọn), provenance | M1, M2 |
-| P1.2 | Bible + Asset registry (nhập ảnh, approval) | M3, M10 |
-| P1.3 | Voice: nhập audio + (nếu D-06 duyệt) 1 engine TTS local; đo thời lượng | M4 |
-| P1.4 | Storyboard + animatic render (FFmpeg: still + camera, subtitle, audio) | M5, M8 |
-| P1.5 | Router (luật) + adapter `ManualImport` / `StillCamera` + ledger + budget guard (chưa có paid adapter) | M6, M7, M10 |
-| P1.6 | Timeline + final render 16:9 + music / SFX | M8 |
-| P1.7 | Review Studio LAN tối thiểu (overview, script, bible, animatic, shot, render; approve / reject / regenerate request) | M9 |
-| P1.8 | Pilot run: truyện pilot → animatic → MP4 (premium shot = nhập tay nếu HUMAN LEAD tự sinh ngoài) | tất cả |
+| Task (dự kiến) | Nội dung |
+|---|---|
+| P1a.1 | Skeleton package, workspace / atomic IO / hashing, import truyện + asset (manifest, provenance) |
+| P1a.2 | `shots.json` + animatic |
+| P1a.3 | Motion render: camera move, parallax, transition, phụ đề, nhạc nền, loudness |
+| P1a.4 | Kiểm output tự động + chạy thật trên asset của HUMAN LEAD |
 
-Exit: AC-001…AC-008 của REQ-001. AC-007 (so sánh phương thức) có thể đạt bằng still so với clip nhập tay.
+## P1b — Mở rộng sau khi xem video P1a
+
+Chỉ xem xét **sau khi HUMAN LEAD xem video P1a**, theo thứ tự ưu tiên HUMAN LEAD chọn lúc đó:
+
+- Review Studio LAN (D-05).
+- Local AI: keyframe nhất quán, i2v Wan trên GPU server (D-07; experiment E2 / E3).
+- TTS local (D-06, E4).
+- Router + ledger + budget guard; tích hợp provider trả phí (D-11, E6).
+- Pilot đầy đủ 60–90 s (D-09, D-12).
+
+Experiment E1–E8 (`docs/research/ANIMATION_WORKFLOW_RESEARCH.md` §9): E1 (FFmpeg camera / parallax) thực chất được kiểm trong P1a. Các experiment còn lại chạy khi chuẩn bị P1b, mỗi cái cần HUMAN LEAD cho phép.
 
 ## P2 — Local Animation
 
@@ -58,9 +63,9 @@ Workflow source-fidelity riêng: xác minh nguồn, review nội dung, template 
 ## Phụ thuộc chính
 
 ```text
-D-02/03/04/05 ─► P1.0 ─► P1.1 ─► P1.2 ─► P1.4 ─► P1.6 ─► P1.8
-                           └► P1.3 ┘   └► P1.5 ┘   P1.7 (song song sau P1.2, writer = 1)
-D-07 + E2/E3 ─► P2      E6 + D-11 ─► P3
+PR #1 merge + D-01/D-14 ─► P0.1 ─► (D-04, D-08) ─► P1a.1 ─► P1a.2 ─► P1a.3 ─► P1a.4 ─► HUMAN LEAD xem video
+                                                                                         └► P1b (chọn hạng mục)
+D-07 + E2/E3 ─► P2 (local AI)      E6 + D-11 ─► P3 (premium)
 ```
 
 Writer thực tế là 1 (`docs/ai/project-profile.md` §7), nên các checkpoint chạy tuần tự trừ khi HUMAN LEAD duyệt pilot worktree.
