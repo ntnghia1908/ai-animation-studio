@@ -35,7 +35,7 @@ Bốn báo cáo trong `docs/research/` được chấp nhận làm **cơ sở đ
 
 | Phase | Nội dung | Trạng thái authorization |
 |---|---|---|
-| P0.1 | Sửa checker, bổ sung quality gate, hoàn thiện CI | Draft: `docs/decisions/P0.1-QUALITY-GATE-AUTHORIZATION-DRAFT.md` (PROPOSED) |
+| P0.1 | Sửa checker, bổ sung quality gate, hoàn thiện CI | `docs/decisions/P0.1-QUALITY-GATE-AUTHORIZATION-DRAFT.md` (ACCEPTED 2026-10-23; hoàn tất, PR #3) |
 | P1a | Vertical slice offline rất nhỏ: nhập truyện, ảnh / giọng, animatic, một đoạn phim có chuyển động | Draft: `docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md` (PROPOSED) |
 | P1b | Review Studio, local AI, tích hợp provider | Chưa draft; chỉ xem xét **sau khi HUMAN LEAD xem video P1a** |
 
