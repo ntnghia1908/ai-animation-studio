@@ -18,7 +18,7 @@ Ngân sách token của file: xem `docs/ai/workflow.md` §10.
 
 PROPOSED, không authorize implementation:
 
-1. PR #1 đã merge (`49295d0`); D-01, D-14 ACCEPTED. HUMAN LEAD merge PR #2 (ADR-001 + bản nháp P0.1 / P1a).
+1. PR #1 (`49295d0`) và PR #2 (`76abae8`) đã merge; D-01, D-14 ACCEPTED.
 2. Boundary P0.1 đã ACCEPTED. Hoàn tất `docs/tasks/P0.1-checker-quality-gate-ci.md`: push qua SSH, mở PR, kiểm CI xanh.
 3. Trên server: tạo conda env (D-04); HUMAN LEAD quyết D-08 (truyện + asset pack: ảnh 5–8 shot, 1 shot có 2–3 layer, file giọng) trước P1a.4.
 
