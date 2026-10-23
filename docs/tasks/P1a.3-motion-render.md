@@ -138,7 +138,7 @@ Không dùng.
   | AC7–AC9 | `test_render.py::test_loudness_ducking_resume_pcm_and_atomic_output` (có / không nhạc: `ebur128`, ducking 880 Hz trước `loudnorm`, `built=0`, PCM sha256, đổi camera → `built=1`, lỗi encode cuối giữ output cũ) |
   | AC10 | `test_render.py::test_animatic_cache_identity_and_music_ignored` + test animatic hiện có |
   | AC11 | full suite; guard `_no_real_services` |
-  | AC12 | `node scripts/quality-gate.mjs` PASS trong env `animation-studio`; CI: xem PR |
+  | AC12 | `node scripts/quality-gate.mjs` PASS trong env `animation-studio`; CI "Quality" xanh trên `91f123c`: https://github.com/ntnghia1908/ai-animation-studio/actions/runs/39973331889 (lần chạy đầu bị hủy ở bước cài FFmpeg qua apt, chạy lại PASS) |
 
 - Chạy tay (ORCHESTRATOR), asset tổng hợp 1920×1080, 6 shot × 5,5 s (đủ 6 kiểu camera, parallax 3 layer, 3 crossfade, phụ đề có dấu, giọng sine 4,5 s / shot, nhạc 20 s lặp):
   - `film.mp4` 1920×1080, 30/1, h264 + aac, 33,000 s (kỳ vọng 33,0); SRT khớp ranh giới 5,5 s; integrated −16,0 LUFS.
