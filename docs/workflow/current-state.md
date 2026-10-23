@@ -11,23 +11,22 @@ Ngân sách token của file: xem `docs/ai/workflow.md` §10.
 ## Current focus
 
 - P0 đã được HUMAN LEAD review (2026-10-23). Research và Option A được chấp nhận. Thứ tự P0.1 → P1a → P1b (`docs/decisions/ADR-001-mvp-architecture-and-phasing.md`).
+- P0.1 READY: PR #3 (`chore/p0.1-quality-gate`), CI xanh; chờ HUMAN LEAD review + merge.
 - Việc chuyển sang server: HUMAN LEAD clone repo về server và làm tiếp ở đó. Laptop chỉ là máy dev.
 
 ## Next proposed action
 
 PROPOSED, không authorize implementation:
 
-1. PR #1 đã merge (`49295d0`); D-01, D-14 ACCEPTED. HUMAN LEAD merge PR #2 (ADR-001 + bản nháp P0.1 / P1a).
-2. HUMAN LEAD duyệt `docs/decisions/P0.1-QUALITY-GATE-AUTHORIZATION-DRAFT.md`. Sau đó thực hiện `docs/tasks/P0.1-checker-quality-gate-ci.md` trên server, branch `chore/p0.1-quality-gate`; push workflow qua SSH hoặc token có scope `workflow`.
+1. PR #1 (`49295d0`) và PR #2 (`76abae8`) đã merge; D-01, D-14 ACCEPTED.
+2. HUMAN LEAD review + merge PR #3 (P0.1); tùy chọn bật required status check "Quality" cho `main`.
 3. Trên server: tạo conda env (D-04); HUMAN LEAD quyết D-08 (truyện + asset pack: ảnh 5–8 shot, 1 shot có 2–3 layer, file giọng) trước P1a.4.
 
 ## Open decisions
 
-- Cho P0.1: duyệt boundary P0.1 (D-01, D-14 đã ACCEPTED).
 - Cho P1a: duyệt boundary P1a; phần còn lại của D-04 (env name, Python version); D-08 (trên server); P1a-1 (vị trí workspace); P1a-2 (ngưỡng quality gate).
 - Hoãn tới P1b: D-05, D-06, D-07, D-09, D-10, D-11, D-12, D-13 (ADR-001 A5).
 
 ## Blockers
 
-- Token `gh` trên laptop thiếu scope `workflow` → không push được file `.github/workflows/`. Trên server dùng SSH hoặc `gh auth refresh -s workflow`.
-- `scripts/product-check.mjs` có lỗi regex; sẽ sửa ở P0.1.
+- Token `gh` thiếu scope `workflow`: push file `.github/workflows/` qua SSH (server đã có SSH key).

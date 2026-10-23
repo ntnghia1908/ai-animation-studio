@@ -10,11 +10,11 @@ if (!fs.existsSync(file)) { console.error(`FAIL: file not found: ${file}`); proc
 const source = fs.readFileSync(file, 'utf8');
 const errors = [];
 const name = file.split('/').pop() ?? '';
-if (!/^REQ-[0-9]+-.+\\.md$/.test(name)) errors.push('filename must match REQ-<number>-<slug>.md');
+if (!/^REQ-[0-9]+-.+\.md$/.test(name)) errors.push('filename must match REQ-<number>-<slug>.md');
 
-const fm = source.match(/^---\\n([\\s\\S]*?)\\n---/);
+const fm = source.match(/^---\n([\s\S]*?)\n---/);
 if (!fm) errors.push('missing YAML frontmatter');
-const status = fm?.[1]?.match(/^status:\\s*(\\S+)\\s*$/m)?.[1];
+const status = fm?.[1]?.match(/^status:\s*(\S+)\s*$/m)?.[1];
 if (!status) errors.push('frontmatter missing status');
 if (status && !['DRAFT','NEEDS_CLARIFICATION','READY','OBSOLETE'].includes(status)) errors.push(`invalid status: ${status}`);
 
@@ -24,15 +24,15 @@ for (const section of [
   '## 11. Out of scope','## 13. Open questions','## 14. Readiness','## 15. Traceability'
 ]) if (!source.includes(section)) errors.push(`missing section: ${section}`);
 
-if (/<!--\\s*(FILL|TBD|TODO):/i.test(source)) errors.push('unresolved template marker');
+if (/<!--\s*(FILL|TBD|TODO):/i.test(source)) errors.push('unresolved template marker');
 
 if (status === 'READY') {
-  if (!/^### FR-\\d{3}/m.test(source)) errors.push('READY requirement needs at least one FR-###');
-  if (!/^### AC-\\d{3}/m.test(source)) errors.push('READY requirement needs at least one AC-###');
-  const oq = source.match(/## 13\\. Open questions[\\s\\S]*?(?=\\n## 14\\.)/)?.[0] ?? '';
-  if (!/\\bNone\\b/i.test(oq)) errors.push('READY requirement must have Open questions = None');
-  const rd = source.match(/## 14\\. Readiness[\\s\\S]*?(?=\\n## 15\\.)/)?.[0] ?? '';
-  if ((rd.match(/^- \\[ \\]/gm) ?? []).length) errors.push('READY requirement still has unchecked readiness items');
+  if (!/^### FR-\d{3}/m.test(source)) errors.push('READY requirement needs at least one FR-###');
+  if (!/^### AC-\d{3}/m.test(source)) errors.push('READY requirement needs at least one AC-###');
+  const oq = source.match(/## 13\. Open questions[\s\S]*?(?=\n## 14\.)/)?.[0] ?? '';
+  if (!/\bNone\b/i.test(oq)) errors.push('READY requirement must have Open questions = None');
+  const rd = source.match(/## 14\. Readiness[\s\S]*?(?=\n## 15\.)/)?.[0] ?? '';
+  if ((rd.match(/^- \[ \]/gm) ?? []).length) errors.push('READY requirement still has unchecked readiness items');
 }
 
 if (errors.length) { for (const e of errors) console.error(`FAIL: ${e}`); process.exit(1); }
