@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1",
+  "id": "chatgpt",
+  "displayName": "ChatGPT repository session",
+  "roles": ["product"],
+  "execution": ["interactive"],
+  "capabilities": {
+    "readRepository": true,
+    "writeRepository": true,
+    "shell": false,
+    "git": false,
+    "pullRequest": true
+  }
+}
