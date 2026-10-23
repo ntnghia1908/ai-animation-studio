@@ -1,0 +1,65 @@
+name: Requirement to Task
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'docs/product/requirements/REQ-*.md'
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  requirement-to-task:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 20
+
+      - name: Validate READY requirements
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(docs/product/requirements/REQ-*.md)
+          if [ ${#files[@]} -eq 0 ]; then exit 0; fi
+          ready=0
+          for f in "${files[@]}"; do
+            if grep -Eq '^status:[[:space:]]*READY[[:space:]]*$' "$f"; then ready=1; fi
+          done
+          if [ "$ready" -ne 1 ]; then
+            echo 'No READY requirement; nothing to hand off.'
+            exit 0
+          fi
+          test -f scripts/product-check.mjs
+          for f in "${files[@]}"; do node scripts/product-check.mjs "$f"; done
+
+      - name: Run Claude as ORCHESTRATOR
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            A READY product requirement changed in this PR.
+
+            Follow adapters/claude-code/REQUIREMENT_HANDOFF.md exactly.
+            You are ORCHESTRATOR only for this step.
+
+            Read repository authority, the READY REQ-xxx file and the existing task template.
+            Create DRAFT task contracts only. Do not modify application source code or tests.
+            Every generated task must contain:
+            - Requirement: REQ-xxx
+            - Requirement elements: relevant FR-/AC- IDs
+            - Status: DRAFT
+            - Implementation authorized: NO
+
+            Do not authorize implementation.
+          claude_args: >-
+            --permission-mode auto
+            --allowedTools "Read,Glob,Grep,Edit,Write,Bash(git:status),Bash(git:diff)"
+            --disallowedTools "Bash(git:commit),Bash(git:push),Bash(gh)"
+          additional_permissions: |
+            actions: read
