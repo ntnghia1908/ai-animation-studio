@@ -115,7 +115,7 @@ Cách chọn:
 ## 9. Setup / tools
 
 - Máy dev hiện tại (2026-10-23): laptop Windows 11, Intel Iris Xe (không có GPU NVIDIA), 16 GB RAM, Node 24, Python 3.13, FFmpeg build 2026-09, WSL Ubuntu (đang dừng). Chỉ dùng để phát triển. Production / GPU worker sẽ chạy trên server; cấu hình server chưa được xác nhận cho project này (`docs/research/PRODUCTION_COST_BENCHMARK.md` §Hardware).
-- Runtime, package manager và dependency của ứng dụng: **chưa chốt**, là decision gate của P1 (đề xuất trong `docs/architecture/ARCHITECTURE_PROPOSAL.md`).
+- Môi trường Python trên server: **conda** (D-04, HUMAN LEAD 2026-10-23). Tên env, Python version, packaging và dependency của ứng dụng chốt khi duyệt P1a (`docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md` §6).
 
 Framework checker: `node scripts/framework-check.mjs`.
 

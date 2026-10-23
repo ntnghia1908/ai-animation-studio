@@ -47,10 +47,10 @@ Mỗi phase cần HUMAN LEAD chấp thuận boundary riêng. ADR này không aut
 |---|---|---|
 | D-02 | Kiến trúc | **ACCEPTED** (A2) |
 | D-03 | Lưu trữ file JSON | **ACCEPTED** trong Option A (A2); SQLite xem lại khi cần |
-| D-01 | Framework adoption | Mở, cần trước khi merge PR #1 / bắt đầu P0.1 |
-| D-14 | Phê chuẩn P0 single-agent | Mở, cần cùng D-01 |
-| D-04 | Runtime / env / test command | Mở, cần cho P1a |
-| D-08 | Truyện + asset cho P1a / pilot | Mở, cần cho P1a |
+| D-01 | Framework adoption | **ACCEPTED** (HUMAN LEAD 2026-10-23; PR #1 merged `49295d0`) |
+| D-14 | Phê chuẩn P0 single-agent | **ACCEPTED** (HUMAN LEAD 2026-10-23) |
+| D-04 | Runtime / env / test command | **ACCEPTED một phần** (HUMAN LEAD 2026-10-23): môi trường server là **conda**. Python version, tên env, packaging và lệnh test vẫn là đề xuất trong P1a draft, chốt khi duyệt P1a |
+| D-08 | Truyện + asset cho P1a / pilot | Mở. HUMAN LEAD quyết khi đã lên server; cần trước P1a.4 (chạy thật), không chặn P1a.1–P1a.3 (dùng asset tổng hợp) |
 | D-06 | TTS | Hoãn: P1a chỉ nhập audio; TTS xét ở P1b |
 | D-09 | Số shot pilot | Hoãn: P1a dùng 5–8 shot; pilot đầy đủ xét sau |
 | D-12 | Phong cách hình ảnh | Hoãn: P1a dùng ảnh nhập tay |

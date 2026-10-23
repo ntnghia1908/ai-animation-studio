@@ -56,7 +56,7 @@ audio/ (WAV/MP3)  ────┴► import-assets ─► asset manifest (sha256
 - CLI (`python -m animation_studio …`). **Không Web UI.**
 - Resume đơn giản: không render lại shot mà input (hash) và tham số không đổi.
 - Test pytest với ảnh / audio tổng hợp bằng FFmpeg; không gọi mạng / dịch vụ.
-- Dependency (nếu D-04 duyệt): Python 3.12, `pytest` (dev). Ngoài ra chỉ FFmpeg / ffprobe hệ thống. **Không** FastAPI, Pillow, ComfyUI, TTS engine.
+- Dependency: conda env (D-04 ACCEPTED), Python 3.12 (đề xuất), `pytest` (dev). Ngoài ra chỉ FFmpeg / ffprobe hệ thống. **Không** FastAPI, Pillow, ComfyUI, TTS engine.
 - Mở rộng quality gate của P0.1 để chạy pytest.
 - Tài liệu: module map trong project-profile, current-state, task contract, hướng dẫn chạy ngắn trong `README.md`.
 
@@ -93,8 +93,8 @@ Ngưỡng đề xuất: không mục nào < 3 và mục tổng thể ≥ 4. Nế
 
 | ID | Câu hỏi | Khuyến nghị |
 |---|---|---|
-| D-04 | Runtime trên server | Python 3.12 trong conda env riêng `animation-studio` (giống youtube-auto-short) hoặc venv; hatchling src-layout; test: `python -m pytest -q` |
-| D-08 | Truyện + asset pack cho P1a | Một truyện ngắn có quyền rõ ràng. HUMAN LEAD chuẩn bị 1–2 nhân vật, 1–2 nền, ảnh cho 5–8 shot (1 shot có 2–3 layer PNG nền trong suốt), file giọng đọc. Trong lúc chờ, dev dùng asset tổng hợp |
+| D-04 | Runtime trên server | Conda: **ACCEPTED**. Còn lại đề xuất: env riêng `animation-studio`, Python 3.12, `pyproject.toml` hatchling src-layout, `pip install -e ".[dev]"`, test `python -m pytest -q` |
+| D-08 | Truyện + asset pack cho P1a (HUMAN LEAD quyết trên server; chỉ cần trước P1a.4) | Một truyện ngắn có quyền rõ ràng. HUMAN LEAD chuẩn bị 1–2 nhân vật, 1–2 nền, ảnh cho 5–8 shot (1 shot có 2–3 layer PNG nền trong suốt), file giọng đọc. Trong lúc chờ, dev dùng asset tổng hợp |
 | P1a-1 | Vị trí workspace trên server | Thư mục ngoài repo, cấu hình bằng `config.toml` (gitignored) |
 | P1a-2 | Ngưỡng quality gate ở §5 | Chấp nhận như đề xuất hoặc chỉnh |
 

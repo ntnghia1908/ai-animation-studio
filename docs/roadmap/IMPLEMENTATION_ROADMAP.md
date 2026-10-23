@@ -63,7 +63,7 @@ Workflow source-fidelity riêng: xác minh nguồn, review nội dung, template 
 ## Phụ thuộc chính
 
 ```text
-PR #1 merge + D-01/D-14 ─► P0.1 ─► (D-04, D-08) ─► P1a.1 ─► P1a.2 ─► P1a.3 ─► P1a.4 ─► HUMAN LEAD xem video
+PR #2 merge + duyệt P0.1 ─► P0.1 ─► duyệt P1a ─► P1a.1 ─► P1a.2 ─► P1a.3 ─► P1a.4 ─► HUMAN LEAD xem video
                                                                                          └► P1b (chọn hạng mục)
 D-07 + E2/E3 ─► P2 (local AI)      E6 + D-11 ─► P3 (premium)
 ```

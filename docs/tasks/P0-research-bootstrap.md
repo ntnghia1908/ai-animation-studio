@@ -15,7 +15,7 @@
 - Owned paths: root framework files, `docs/`, `scripts/` (từ kit), `adapters/`, `.claude/`, `.gitattributes`
 - Dependencies: none
 - Base commit / branch: `f88b8b8` / `feature/p0-research-bootstrap`
-- Human Lead approval: inherited from kickoff (P0 scope); execution profile single-agent chờ phê chuẩn (D-14)
+- Human Lead approval: inherited from kickoff (P0 scope); execution profile single-agent phê chuẩn hồi tố (D-14 ACCEPTED 2026-10-23)
 - Implementation authorized: YES
 
 Lifecycle: `task` mode = `DRAFT → APPROVED → IN_PROGRESS → READY`; `boundary` mode = `DRAFT → IN_PROGRESS → READY`. DONE suy ra từ Git sau khi merge.
@@ -32,7 +32,7 @@ Repository có framework v4.4 đã adopt và cấu hình cho project, cùng bộ
 ## Authority / key decisions
 
 - Kickoff HUMAN LEAD §1–§13. Không tạo decision `ACCEPTED`; mọi đề xuất ghi là PROPOSED / PROPOSAL.
-- Single-agent: ORCHESTRATOR viết trực tiếp vì việc chỉ gồm tài liệu / nghiên cứu cần toàn bộ ngữ cảnh. Chờ HUMAN LEAD phê chuẩn (D-14).
+- Single-agent: ORCHESTRATOR viết trực tiếp vì việc chỉ gồm tài liệu / nghiên cứu cần toàn bộ ngữ cảnh. HUMAN LEAD phê chuẩn hồi tố (D-14, 2026-10-23).
 
 ## Implementation approach
 
@@ -68,7 +68,7 @@ Tất cả required verification phải chạy và PASS trước READY.
 
 Không chạm database, security model hay public API contract. Manual review của HUMAN LEAD là đọc PR P0.
 
-- [ ] HUMAN LEAD đọc báo cáo và trả lời D-01…D-14.
+- [x] HUMAN LEAD đọc báo cáo; quyết định ghi ở `docs/decisions/ADR-001-mvp-architecture-and-phasing.md` A5.
 
 ## Handoff
 
@@ -100,5 +100,5 @@ Không dùng.
   - Giá nhiều provider là nguồn thứ cấp.
   - Chưa đăng nhập Figma Education.
   - Finding ngoài scope: `scripts/product-check.mjs` của kit có lỗi regex (`\\.`, `\\n` trong regex literal) nên luôn FAIL. Báo HUMAN LEAD, không sửa.
-- HUMAN LEAD review (2026-10-23): chấp nhận research + Option A; tách P1 thành P0.1 → P1a → P1b → `docs/decisions/ADR-001-mvp-architecture-and-phasing.md`. D-14 vẫn mở.
-- PR: #1, branch `feature/p0-research-bootstrap`.
+- HUMAN LEAD review (2026-10-23): chấp nhận research + Option A; tách P1 thành P0.1 → P1a → P1b → `docs/decisions/ADR-001-mvp-architecture-and-phasing.md`. D-01, D-14 ACCEPTED.
+- PR: #1 (merged `49295d0`), branch `feature/p0-research-bootstrap`.
