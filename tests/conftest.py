@@ -36,11 +36,13 @@ def _ffmpeg(*args):
 
 @pytest.fixture
 def make_png(tmp_path):
-    def make(name="img.png", alpha=False, color="red", patch=False):
+    def make(name="img.png", alpha=False, color="red", patch=False, detail=False):
         path = tmp_path / "src" / name
         path.parent.mkdir(exist_ok=True)
         fmt = "rgba" if alpha else "rgb24"
         source = f"color=c={color}:s=64x48"
+        if detail:
+            source += ",drawbox=x=16:y=16:w=8:h=8:color=lime:t=fill"
         if patch:
             source += ",format=rgba,geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':a='if(between(X,24,39)*between(Y,16,31),255,0)'"
         _ffmpeg("-f", "lavfi", "-i", source, "-frames:v", "1",
@@ -65,9 +67,9 @@ def shot_project(tmp_path, make_png, make_wav):
 
 @pytest.fixture
 def make_wav(tmp_path):
-    def make(name="voice.wav", seconds=1):
+    def make(name="voice.wav", seconds=1, frequency=440):
         path = tmp_path / "src" / name
         path.parent.mkdir(exist_ok=True)
-        _ffmpeg("-f", "lavfi", "-i", f"sine=frequency=440:duration={seconds}", str(path))
+        _ffmpeg("-f", "lavfi", "-i", f"sine=frequency={frequency}:duration={seconds}", str(path))
         return path
     return make

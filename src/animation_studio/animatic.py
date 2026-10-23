@@ -17,7 +17,8 @@ AUDIO = ["-c:a", "aac", "-ar", "48000", "-ac", "2"]
 SCALE = "scale=1920:1080:force_original_aspect_ratio=decrease"
 
 
-def _run(args: list[str], cwd: Path | None = None) -> None:
+def run_ffmpeg(args: list[str], cwd: Path | None = None) -> str:
+    """Run within the command budget; return stderr for FFmpeg measurement filters."""
     try:
         proc = subprocess.run(["ffmpeg", "-v", "error", "-y", *args], cwd=cwd,
                               capture_output=True, text=True, timeout=240)
@@ -25,6 +26,7 @@ def _run(args: list[str], cwd: Path | None = None) -> None:
         raise UserError(f"ffmpeg failed: {exc}") from exc
     if proc.returncode:
         raise UserError(f"ffmpeg failed: {proc.stderr.strip()}")
+    return proc.stderr
 
 
 def _segment(shot: dict, target: Path) -> None:
@@ -45,7 +47,7 @@ def _segment(shot: dict, target: Path) -> None:
     filters.append(f"[{count}:a]apad[a]")
     with tempfile.TemporaryDirectory(dir=target.parent) as temp:
         output = Path(temp) / "segment.mp4"
-        _run([*args, "-filter_complex_threads", "1", "-filter_complex", ";".join(filters),
+        run_ffmpeg([*args, "-filter_complex_threads", "1", "-filter_complex", ";".join(filters),
               "-map", f"[{layer}]", "-map", "[a]", "-t", str(shot["duration_s"]),
               *VIDEO, *AUDIO, str(output)])
         output.replace(target)
@@ -57,6 +59,25 @@ def _timestamp(seconds: float) -> str:
     minutes, ms = divmod(ms, 60000)
     seconds, ms = divmod(ms, 1000)
     return f"{hours:02}:{minutes:02}:{seconds:02},{ms:03}"
+
+
+def srt_cues(shots: list[dict]) -> tuple[bytes, list[str]]:
+    """Build captions on the nominal shot timeline, independent of transitions."""
+    cues, elapsed = [], 0.0
+    for shot in shots:
+        end = elapsed + shot["duration_s"]
+        if shot["subtitle"].strip():
+            text = "\n".join(line for line in shot["subtitle"].splitlines() if line.strip())
+            cues.append(f"{len(cues) + 1}\n{_timestamp(elapsed)} --> {_timestamp(end)}\n{text}\n\n")
+        elapsed = end
+    return "".join(cues).encode("utf-8"), cues
+
+
+def subtitle_filter(stage: Path, subtitles: bytes, cues: list[str]) -> str:
+    """Stage safe local filenames and the bundled font for subtitle burning."""
+    atomic_write_bytes(stage / "subtitles.srt", subtitles)
+    (stage / "fonts").symlink_to(FONTS, target_is_directory=True)
+    return "subtitles=subtitles.srt:fontsdir=fonts:force_style='FontName=Be Vietnam Pro'" if cues else "null"
 
 
 def build_animatic(workspace: Path, project_id: str) -> tuple[int, int, Path]:
@@ -75,7 +96,9 @@ def build_animatic(workspace: Path, project_id: str) -> tuple[int, int, Path]:
     cache = out / "segments"
     cache.mkdir(parents=True, exist_ok=True)
     built = reused = 0
-    segments, cues, elapsed = [], [], 0.0
+    segments = []
+    subtitles, cues = srt_cues(shots)
+    elapsed = sum(shot["duration_s"] for shot in shots)
     for shot, key in planned:
         segment = cache / f"{key}.mp4"
         if segment.is_file():
@@ -84,12 +107,6 @@ def build_animatic(workspace: Path, project_id: str) -> tuple[int, int, Path]:
             _segment(shot, segment)
             built += 1
         segments.append(segment)
-        end = elapsed + shot["duration_s"]
-        if shot["subtitle"].strip():
-            text = "\n".join(line for line in shot["subtitle"].splitlines() if line.strip())
-            cues.append(f"{len(cues) + 1}\n{_timestamp(elapsed)} --> {_timestamp(end)}\n{text}\n\n")
-        elapsed = end
-    subtitles = "".join(cues).encode("utf-8")
     target = out / "animatic.mp4"
     with tempfile.TemporaryDirectory(dir=out) as temp:
         stage = Path(temp)
@@ -98,11 +115,9 @@ def build_animatic(workspace: Path, project_id: str) -> tuple[int, int, Path]:
             (stage / f"{i}.mp4").symlink_to(segment)
         listing = "".join(f"file '{i}.mp4'\nduration {shot['duration_s']}\n" for i, shot in enumerate(shots))
         atomic_write_bytes(stage / "concat.txt", listing.encode())
-        _run(["-f", "concat", "-safe", "0", "-i", "concat.txt", "-c", "copy", "joined.mp4"], stage)
-        atomic_write_bytes(stage / "subtitles.srt", subtitles)
-        (stage / "fonts").symlink_to(FONTS, target_is_directory=True)
-        vf = "subtitles=subtitles.srt:fontsdir=fonts:force_style='FontName=Be Vietnam Pro'" if cues else "null"
-        _run(["-i", "joined.mp4", "-vf", vf, *VIDEO, "-c:a", "copy", "-t", str(elapsed),
+        run_ffmpeg(["-f", "concat", "-safe", "0", "-i", "concat.txt", "-c", "copy", "joined.mp4"], stage)
+        vf = subtitle_filter(stage, subtitles, cues)
+        run_ffmpeg(["-i", "joined.mp4", "-vf", vf, *VIDEO, "-c:a", "copy", "-t", str(elapsed),
               "-movflags", "+faststart", "animatic.mp4"], stage)
         atomic_write_bytes(out / "subtitles.srt", subtitles)
         (stage / "animatic.mp4").replace(target)

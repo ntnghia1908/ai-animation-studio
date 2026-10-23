@@ -68,3 +68,15 @@ def test_duration_resolution_and_defaults(shot_project, requested, expected):
     assert first["duration_s"] == expected and second["duration_s"] == 0.7
     assert first["camera"] == "static" and first["transition"] == "cut"
     assert first["images"][0].is_absolute() and first["audio"].is_absolute()
+
+
+@pytest.mark.parametrize("music", [123, None, "missing", "image"])
+@pytest.mark.parametrize("command", ["animatic", "render"])
+def test_invalid_music_without_output(shot_project, music, command, capsys):
+    ws, pdir, assets = shot_project
+    atomic_write_json(pdir / "shots.json", {"version": 1,
+        "music": assets[0] if music == "image" else music,
+        "shots": [dict(id="s1", image=assets[0], duration_s=1)]})
+    assert main(["--workspace", str(ws), command, "p1"]) == 1
+    assert "shots.json (root): music:" in capsys.readouterr().err
+    assert not (pdir / command).exists()
