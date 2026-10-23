@@ -201,7 +201,7 @@ Không dùng.
   | AC6, AC7, AC8 | `test_qc.py::test_reproducibility_alpha_atomic_and_cli`, `test_assets.py::test_fully_transparent_warning`, test render / loudness (exit code, output CLI, giữ phim) |
   | AC9 | `test_render.py::test_parallel_segments_identity_and_failure` (barrier, byte giống hệt 1 worker, lỗi worker) |
   | AC10 | full suite 106 passed |
-  | AC11 | `node scripts/quality-gate.mjs` PASS trong env `animation-studio`; CI: xem PR |
+  | AC11 | `node scripts/quality-gate.mjs` PASS trong env `animation-studio`; CI "Quality" xanh trên `ab7778e`: https://github.com/ntnghia1908/ai-animation-studio/actions/runs/39992345229 |
 
 - Chạy tay (ORCHESTRATOR), dùng asset pilot thật thay bộ tổng hợp của P1a.3 (đủ 5 kiểu camera + `static`, parallax 3 layer, 4 crossfade, giọng + nhạc):
   - Bản giọng Piper (50,0 s): `check` → PASS cả 9 mục (`reproducible` SKIP lần đầu), QC mất 17 s. Render lần 1 (8 segment) 132 s so với ~300 s tuần tự; lần 2 (cache) 94 s; lần 3 sau khi xóa `segments/` 133 s; `reproducible` PASS ở lần 2 và 3; `film.mp4` song song giống từng byte bản dựng tuần tự.
@@ -215,4 +215,4 @@ Không dùng.
   - Lỗi trong một worker: chờ mọi worker xong, raise lỗi của shot đầu tiên theo thứ tự; segment thành công giữ trong cache.
 - Pilot (Phần B): bản xem trước đã có (`~/animation-studio-pilot/to-kien/preview/`), chưa chạy trên workspace thật, chưa có điểm HUMAN LEAD.
 - Known limitations: encode cuối vẫn 1 thread (bước chậm nhất; tăng thread không ảnh hưởng AC-006 nhưng cần task riêng); QC `black` không miễn cảnh tối; ngưỡng QC cố định.
-- PR:
+- PR: https://github.com/ntnghia1908/ai-animation-studio/pull/10
