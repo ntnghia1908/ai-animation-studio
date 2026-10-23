@@ -11,7 +11,7 @@ Ngân sách token của file: xem `docs/ai/workflow.md` §10.
 ## Current focus
 
 - P0 đã được HUMAN LEAD review (2026-10-23). Research và Option A được chấp nhận. Thứ tự P0.1 → P1a → P1b (`docs/decisions/ADR-001-mvp-architecture-and-phasing.md`).
-- P0.1 đang IN_PROGRESS (branch `chore/p0.1-quality-gate`): đã sửa `product-check.mjs`, thêm quality gate + CI; chờ push, PR, CI xanh.
+- P0.1 READY: PR #3 (`chore/p0.1-quality-gate`), CI xanh; chờ HUMAN LEAD review + merge.
 - Việc chuyển sang server: HUMAN LEAD clone repo về server và làm tiếp ở đó. Laptop chỉ là máy dev.
 
 ## Next proposed action
@@ -19,7 +19,7 @@ Ngân sách token của file: xem `docs/ai/workflow.md` §10.
 PROPOSED, không authorize implementation:
 
 1. PR #1 (`49295d0`) và PR #2 (`76abae8`) đã merge; D-01, D-14 ACCEPTED.
-2. Boundary P0.1 đã ACCEPTED. Hoàn tất `docs/tasks/P0.1-checker-quality-gate-ci.md`: push qua SSH, mở PR, kiểm CI xanh.
+2. HUMAN LEAD review + merge PR #3 (P0.1); tùy chọn bật required status check "Quality" cho `main`.
 3. Trên server: tạo conda env (D-04); HUMAN LEAD quyết D-08 (truyện + asset pack: ảnh 5–8 shot, 1 shot có 2–3 layer, file giọng) trước P1a.4.
 
 ## Open decisions
@@ -29,4 +29,4 @@ PROPOSED, không authorize implementation:
 
 ## Blockers
 
-- Push `.github/workflows/` (P0.1) cần SSH hoặc token có scope `workflow` (`gh auth refresh -s workflow`); làm trên server.
+- Token `gh` thiếu scope `workflow`: push file `.github/workflows/` qua SSH (server đã có SSH key).
