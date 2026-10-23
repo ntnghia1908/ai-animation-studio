@@ -154,4 +154,4 @@ Không dùng.
   - Ducking: `sidechaincompress` threshold 0,005, ratio 20; đo trong test giảm khoảng 23 dB.
   - Asset thử đầu tiên của ORCHESTRATOR có layer PNG trong suốt hoàn toàn (`drawbox` không đặt alpha) nên shot parallax chỉ thấy nền; tạo lại asset thì đúng. Đây là limitation đã ghi ở P1a.2; đề xuất P1a.4 cảnh báo layer có alpha = 0 toàn bộ.
 - Known limitations: biên độ / easing / thời lượng crossfade cố định; ảnh không 16:9 bị crop; dao động tốc độ ±0,4 px khi pan (nếu HUMAN LEAD thấy giật ở P1a.4 thì nâng canvas lên 4×, đổi lại chậm hơn); resume chỉ tái dùng segment video, audio và encode cuối luôn chạy lại.
-- PR:
+- PR: https://github.com/ntnghia1908/ai-animation-studio/pull/9
