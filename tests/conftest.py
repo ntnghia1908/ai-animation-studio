@@ -36,14 +36,31 @@ def _ffmpeg(*args):
 
 @pytest.fixture
 def make_png(tmp_path):
-    def make(name="img.png", alpha=False, color="red"):
+    def make(name="img.png", alpha=False, color="red", patch=False):
         path = tmp_path / "src" / name
         path.parent.mkdir(exist_ok=True)
         fmt = "rgba" if alpha else "rgb24"
-        _ffmpeg("-f", "lavfi", "-i", f"color=c={color}:s=64x48", "-frames:v", "1",
+        source = f"color=c={color}:s=64x48"
+        if patch:
+            source += ",format=rgba,geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':a='if(between(X,24,39)*between(Y,16,31),255,0)'"
+        _ffmpeg("-f", "lavfi", "-i", source, "-frames:v", "1",
                 "-vf", f"format={fmt}", str(path))
         return path
     return make
+
+
+@pytest.fixture
+def shot_project(tmp_path, make_png, make_wav):
+    from animation_studio.assets import import_assets
+    from animation_studio.workspace import read_json
+    ws = tmp_path / "ws ' có dấu"
+    meta = {"license": "CC0", "source_tool": "ffmpeg"}
+    import_assets(ws, "p1", "image", [make_png(), make_png("blue.png", color="blue"),
+                  make_png("patch.png", alpha=True, color="lime", patch=True)], meta)
+    import_assets(ws, "p1", "audio", [make_wav()], meta)
+    pdir = ws / "projects/p1"
+    assets = read_json(pdir / "assets/manifest.json")["assets"]
+    return ws, pdir, [a["path"] for a in assets]
 
 
 @pytest.fixture

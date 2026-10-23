@@ -18,6 +18,32 @@ python -m animation_studio import-assets my-story --kind image --license CC0 --s
 
 `--workspace DIR` overrides `config.toml`. Data goes to `<workspace>/projects/<project>/{story,assets}/`.
 
+## Animatic
+
+Write `<workspace>/projects/<project>/shots.json` using paths from `assets/manifest.json`:
+
+```json
+{"version": 1, "shots": [
+  {"id": "s01", "image": "assets/images/<file>.png", "audio": "assets/audio/<voice>.wav", "subtitle": "Ngày xưa…"},
+  {"id": "s02", "layers": ["assets/images/<bg>.png", "assets/images/<fg>.png"], "duration_s": 2}
+]}
+```
+
+Use either `image` or 2–3 `layers` (bottom to top). Without audio, `duration_s` is required;
+with audio, the shot lasts the longer of `duration_s` and the imported audio duration.
+Optional `camera` (`static`, `push_in`, `pull_out`, `pan_left`, `pan_right`, `parallax`)
+and `transition` (`cut`, `crossfade`) are validated; this animatic uses static layers and straight cuts.
+`parallax` requires layers. Shot IDs must be unique lowercase letters/digits/`_`/`-`,
+starting with a letter or digit, up to 32 characters.
+
+```bash
+python -m animation_studio animatic my-story
+```
+
+Output: `<project>/animatic/animatic.mp4` (1080p, 30 fps, H.264/AAC), plus `subtitles.srt`.
+Vietnamese subtitles use the bundled Be Vietnam Pro font (SIL OFL).
+Unchanged segments in `animatic/segments/` are reused; deleting that cache is safe.
+
 ## Test
 
 ```bash
