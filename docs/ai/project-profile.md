@@ -3,7 +3,7 @@
 | Metadata | Value |
 |---|---|
 | Status | CURRENT |
-| Project stage | P0 đã review (2026-10-23); kế tiếp P0.1 → P1a → P1b theo ADR-001; chưa có boundary nào được authorize |
+| Project stage | P0 đã review (2026-10-23); P0.1 hoàn tất (PR #3); kế tiếp P1a → P1b theo ADR-001; boundary P1a chưa được authorize |
 
 Canonical owner cho: project là gì, authority order, module map, project policy, integration mechanism, execution profile được phép, setup và Test policy.
 
@@ -21,7 +21,7 @@ Canonical owner cho: project là gì, authority order, module map, project polic
 
 ## 2. Authority order
 
-1. HUMAN LEAD decisions, approved task contracts và decision record `ACCEPTED` trong `docs/decisions/`. Hiện có: `docs/decisions/ADR-001-mvp-architecture-and-phasing.md` (ACCEPTED: Option A, ràng buộc tăng trưởng, thứ tự P0.1 → P1a → P1b, trạng thái D-01…D-14). Bản nháp `PROPOSED`: `P0.1-QUALITY-GATE-AUTHORIZATION-DRAFT.md`, `P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md`. `P1-IMPLEMENTATION-AUTHORIZATION-DRAFT.md` đã `SUPERSEDED`.
+1. HUMAN LEAD decisions, approved task contracts và decision record `ACCEPTED` trong `docs/decisions/`. Hiện có: `docs/decisions/ADR-001-mvp-architecture-and-phasing.md` (ACCEPTED: Option A, ràng buộc tăng trưởng, thứ tự P0.1 → P1a → P1b, trạng thái D-01…D-14). `P0.1-QUALITY-GATE-AUTHORIZATION-DRAFT.md` (ACCEPTED, hoàn tất). Bản nháp `PROPOSED`: `P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md`. `P1-IMPLEMENTATION-AUTHORIZATION-DRAFT.md` đã `SUPERSEDED`.
 2. `docs/ai/workflow.md`, `docs/ai/execution-profiles.md` và file này cho workflow / policy.
 3. Requirement `READY` trong `docs/product/requirements/` cho hành vi sản phẩm (READY ≠ authorization). REQ-001 hiện là `NEEDS_CLARIFICATION`.
 4. Source code và tests hiện hành (chưa có).
@@ -85,7 +85,7 @@ HUMAN LEAD giữ: scope, architecture, dependency, provider / chi tiêu, chính 
 
 Project chọn `task` (cần APPROVE TASK) hoặc `boundary` (HUMAN LEAD cấp Implementation Authorization Boundary một lần). Ghi lựa chọn trong `framework.config.json` và không tự đổi giữa phiên.
 
-Project này dùng `boundary` (`framework.config.json`). Chưa có boundary nào được duyệt.
+Project này dùng `boundary` (`framework.config.json`). Boundary đã duyệt: P0.1 (hoàn tất). Chưa có boundary P1a.
 
 ### Execution profile ưu tiên: native dual-agent
 

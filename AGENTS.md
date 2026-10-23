@@ -43,8 +43,8 @@ CLI đang mở (Claude Code hoặc Codex) tự đề xuất mình là ORCHESTRAT
 
 ## Project boundary
 
-- Giai đoạn hiện tại: P0 đã review; kế tiếp **P0.1 — checker, quality gate, CI** (chưa authorized; chi tiết: `docs/ai/project-profile.md`).
+- Giai đoạn hiện tại: P0 đã review; P0.1 (checker, quality gate, CI) đã xong (PR #3). Kế tiếp **P1a — vertical slice** (chưa authorized; chi tiết: `docs/ai/project-profile.md`).
 - Repository chưa có source code ứng dụng. Hướng kiến trúc: Option A (`docs/decisions/ADR-001-mvp-architecture-and-phasing.md`). Mọi module M1–M10 chỉ là **planned**; không xây trước khi vertical slice cần (ADR-001 A3).
-- **Chưa có Implementation Authorization Boundary nào được duyệt.** Không tạo/sửa source, test, dependency hay config ứng dụng cho tới khi HUMAN LEAD duyệt boundary tương ứng. Thứ tự: P0.1 → P1a → P1b (ADR-001 A4). Bản nháp: `docs/decisions/P0.1-QUALITY-GATE-AUTHORIZATION-DRAFT.md`, `docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md`.
+- Boundary duy nhất đã duyệt là P0.1 (`docs/decisions/P0.1-QUALITY-GATE-AUTHORIZATION-DRAFT.md`, ACCEPTED, đã hoàn tất). **Chưa có boundary P1a.** Không tạo/sửa source, test, dependency hay config ứng dụng cho tới khi HUMAN LEAD duyệt boundary tương ứng. Thứ tự: P0.1 → P1a → P1b (ADR-001 A4). Bản nháp: `docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md`. Quality gate: `node scripts/quality-gate.mjs`.
 - Không gọi API trả phí, không mua/đăng ký dịch vụ, không đăng nội dung lên YouTube khi chưa có HUMAN LEAD approval rõ ràng.
 - Repository là public: không commit media nguồn có bản quyền của bên thứ ba (vd video tham khảo), credential hay token.
