@@ -102,12 +102,12 @@ Project này dùng `boundary` (`framework.config.json`). Boundary đã duyệt: 
 
 Canonical owner cho việc tool nào được làm IMPLEMENTER của task `dual-agent`; HUMAN LEAD duyệt danh sách adapter được phép. Tên model / vendor chỉ ghi ở đây và ở adapter, không ghi vào Core.
 
-Danh sách dưới đây là **đề xuất ban đầu**, chờ HUMAN LEAD xác nhận khi duyệt boundary P1.
+HUMAN LEAD xác nhận danh sách (2026-10-23): cả hai adapter đều **active** làm IMPLEMENTER; không adapter nào được ưu tiên cố định. ORCHESTRATOR chọn theo task và hạn mức còn lại để tận dụng cả hai (`docs/ai/workflow.md` §5: chi phí trên mỗi task merge).
 
 | Adapter | Điểm mạnh | Giới hạn | Dùng khi | Dự phòng |
 |---|---|---|---|---|
-| `claude-code` (subagent `implementer`) | tích hợp sẵn với ORCHESTRATOR Claude Code, không cần CLI riêng | tiêu hạn mức của session chính | mặc định cho task P1 | `codex` |
-| `codex` (`codex exec` / native worker) | dùng hạn mức gói Codex; vendor khác nên review chéo được | chưa pilot trong project này; sandbox giới hạn mạng / loopback | task tự chứa, spec rõ; reviewer thứ hai cho task S2 | `claude-code` |
+| `claude-code` (subagent `implementer`) | tích hợp sẵn với ORCHESTRATOR Claude Code, không cần CLI riêng | tiêu hạn mức của session chính | task cần bám sát convention repo, nhiều quyết định nhỏ khi implement | `codex` |
+| `codex` (`codex exec` / native worker) | dùng hạn mức gói Codex; vendor khác nên review chéo được | sandbox giới hạn mạng / loopback; kiểm quota trước (`scripts/codex-usage.py`); cách chạy: `adapters/codex/README.md` | task tự chứa, spec rõ; khi muốn giữ hạn mức session Claude; reviewer thứ hai cho task S2 | `claude-code` |
 
 Cách chọn:
 
