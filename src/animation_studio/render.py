@@ -77,9 +77,10 @@ def _audio(shots: list[dict], music: Path | None, total: float, stage: Path) -> 
         output = "mix"
     run_ffmpeg([*args, "-filter_complex_threads", "1", "-filter_complex", ";".join(filters),
                 "-map", f"[{output}]", "-t", str(total), "-c:a", "pcm_s24le", "mixed.wav"], stage)
-    measured = run_ffmpeg(["-v", "info", "-i", "mixed.wav", "-af", f"{LOUDNESS}:print_format=json",
+    measured = run_ffmpeg(["-nostats", "-v", "info", "-i", "mixed.wav", "-af", f"{LOUDNESS}:print_format=json",
                            "-f", "null", "-"], stage)
-    stats = json.loads(measured[measured.rfind("{"):])
+    # Decode one object, allowing FFmpeg progress/log lines after its closing brace.
+    stats, _ = json.JSONDecoder().raw_decode(measured, measured.rfind("{"))
     normalizer = "anull"
     if math.isfinite(float(stats["input_i"])) and float(stats["input_i"]) >= -70:
         normalizer = (f"{LOUDNESS}:linear=true:measured_I={stats['input_i']}:measured_TP={stats['input_tp']}:"

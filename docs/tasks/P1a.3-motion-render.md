@@ -126,8 +126,8 @@ Không dùng.
 ## Result
 
 - Main changes: `render.py` mới (segment video-only có cache, camera / parallax, ghép `xfade` / `concat`, mix giọng + nhạc `sidechaincompress`, `loudnorm` hai lượt, burn phụ đề); lệnh CLI `render`; trường root `music` trong `shots.py` (validate chung qua `_asset`); `animatic.py` tách `run_ffmpeg`, `srt_cues`, `subtitle_filter` dùng chung (key cache animatic không đổi); README mục Render.
-- IMPLEMENTER: `codex exec` (model `gpt-6.1-sol`, effort high, sandbox `workspace-write`), 1 lượt, khoảng 81k tokens, 0 vòng sửa.
-- Tests (`python -m pytest -q`: 65 passed):
+- IMPLEMENTER: `codex exec` (model `gpt-6.1-sol`, effort high, sandbox `workspace-write`), 1 lượt + 1 vòng sửa (`codex exec resume`), khoảng 81k + 104k tokens.
+- Tests (`python -m pytest -q`: 67 passed sau vòng sửa):
 
   | AC | Test |
   |---|---|
@@ -147,7 +147,7 @@ Không dùng.
   - Thời gian render 33 s phim: 2 phút 20 giây (1 thread); đổi layer 1 shot: `built=1 reused=5`, 1 phút; PCM sha256 giống nhau giữa hai lần render.
 - Diff + / − (app, test): app +195 / −25; test +216 / −7; README +13.
 - Helper mới (đã tìm, lý do không tái dùng): tìm bằng `rg -n 'def |loudnorm|sidechain|srt|ffmpeg' src tests`. Tách chung: `run_ffmpeg`, `srt_cues`, `subtitle_filter` (từ `build_animatic` / `_run`), `shots._asset`. Mới: `render._segment` (animatic pad + có audio; render cần cover, chuyển động, video-only), `render._audio` (chưa có mixer / ducking / loudnorm), `build_render`; helper test `frame`, `box`, `pcm`.
-- Review: ORCHESTRATOR review diff-first; không có finding chặn. Nhỏ, không sửa: `build_render` đọc lại `shots.json` để lấy `music` (đã validate trong `load_shots`).
+- Review: ORCHESTRATOR review diff-first; không có finding chặn. CI lần đầu fail (10 test): FFmpeg của runner in dòng tiến độ sau JSON `loudnorm`, `json.loads` lỗi `Extra data`. Vòng sửa: `-nostats` + `JSONDecoder.raw_decode`, thêm `test_loudnorm_measurement_ignores_trailing_progress` (app +3 / −2, test +17). Nhỏ, không sửa: `build_render` đọc lại `shots.json` để lấy `music` (đã validate trong `load_shots`).
 - Important findings / decisions:
   - Chống rung: upscale lanczos lên canvas 3840×2160 (parallax 4608×2592) một lần rồi loop; `zoompan` (push / pull / pan) hoặc `crop` theo frame (parallax) trên canvas đó, rồi scale về 1080p.
   - Encode giữ 1 thread (`VIDEO` của animatic, `-filter_complex_threads 1`).

@@ -37,6 +37,23 @@ def pcm(path):
     return ffmpeg("-i", path, "-vn", "-f", "s16le", "-").stdout
 
 
+@pytest.mark.parametrize("suffix", ["\nsize=N/A time=00:00:02.00 speed=10x\r\n", "\n"])
+def test_loudnorm_measurement_ignores_trailing_progress(tmp_path, monkeypatch, suffix):
+    stats = {"input_i": "-24", "input_tp": "-10", "input_lra": "0",
+             "input_thresh": "-34", "target_offset": "0"}
+    calls = []
+
+    def fake_ffmpeg(args, cwd=None):
+        calls.append(args)
+        return 'earlier log {"ignored": true}\n' + json.dumps(stats) + suffix
+
+    monkeypatch.setattr(render, "run_ffmpeg", fake_ffmpeg)
+    render._audio([], None, 2, tmp_path)
+    assert "-nostats" in calls[1]
+    applied = calls[-1][calls[-1].index("-af") + 1]
+    assert "measured_I=-24" in applied and "measured_thresh=-34" in applied
+
+
 @pytest.mark.parametrize("cameras", [("push_in", "pull_out"), ("pan_left", "pan_right"), ("static", "static")])
 def test_camera_direction_and_cover(shot_project, make_png, cameras):
     ws, pdir, _ = shot_project
