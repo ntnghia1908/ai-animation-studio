@@ -126,8 +126,8 @@ Không dùng.
 ## Result
 
 - Main changes: `render.py` mới (segment video-only có cache, camera / parallax, ghép `xfade` / `concat`, mix giọng + nhạc `sidechaincompress`, `loudnorm` hai lượt, burn phụ đề); lệnh CLI `render`; trường root `music` trong `shots.py` (validate chung qua `_asset`); `animatic.py` tách `run_ffmpeg`, `srt_cues`, `subtitle_filter` dùng chung (key cache animatic không đổi); README mục Render.
-- IMPLEMENTER: `codex exec` (model `gpt-6.1-sol`, effort high, sandbox `workspace-write`), 1 lượt + 1 vòng sửa (`codex exec resume`), khoảng 81k + 104k tokens.
-- Tests (`python -m pytest -q`: 67 passed sau vòng sửa):
+- IMPLEMENTER: `codex exec` (model `gpt-6.1-sol`, effort high, sandbox `workspace-write`), 1 lượt + 2 vòng sửa (`codex exec resume`), khoảng 81k + 104k + 126k tokens.
+- Tests (`python -m pytest -q`: 67 passed sau 2 vòng sửa, FFmpeg 6.1.1):
 
   | AC | Test |
   |---|---|
@@ -147,7 +147,7 @@ Không dùng.
   - Thời gian render 33 s phim: 2 phút 20 giây (1 thread); đổi layer 1 shot: `built=1 reused=5`, 1 phút; PCM sha256 giống nhau giữa hai lần render.
 - Diff + / − (app, test): app +195 / −25; test +216 / −7; README +13.
 - Helper mới (đã tìm, lý do không tái dùng): tìm bằng `rg -n 'def |loudnorm|sidechain|srt|ffmpeg' src tests`. Tách chung: `run_ffmpeg`, `srt_cues`, `subtitle_filter` (từ `build_animatic` / `_run`), `shots._asset`. Mới: `render._segment` (animatic pad + có audio; render cần cover, chuyển động, video-only), `render._audio` (chưa có mixer / ducking / loudnorm), `build_render`; helper test `frame`, `box`, `pcm`.
-- Review: ORCHESTRATOR review diff-first; không có finding chặn. CI lần đầu fail (10 test): FFmpeg của runner in dòng tiến độ sau JSON `loudnorm`, `json.loads` lỗi `Extra data`. Vòng sửa: `-nostats` + `JSONDecoder.raw_decode`, thêm `test_loudnorm_measurement_ignores_trailing_progress` (app +3 / −2, test +17). Nhỏ, không sửa: `build_render` đọc lại `shots.json` để lấy `music` (đã validate trong `load_shots`).
+- Review: ORCHESTRATOR review diff-first; không có finding chặn. CI lần đầu fail (10 test): FFmpeg của runner in dòng tiến độ sau JSON `loudnorm`, `json.loads` lỗi `Extra data`. Vòng sửa: `-nostats` + `JSONDecoder.raw_decode`, thêm `test_loudnorm_measurement_ignores_trailing_progress` (app +3 / −2, test +17). CI lần hai fail `test_loudness_ducking_resume_pcm_and_atomic_output[True]` (PCM hash khác giữa hai lần render): runner `ubuntu-latest` dùng FFmpeg 8.0, server dùng 6.1. ORCHESTRATOR tái hiện bằng FFmpeg 8.0.1 (conda-forge, env tạm ngoài repo): `sidechaincompress` với hai input không tất định (5 hash / 6 lần) vì cỡ frame thay đổi theo lịch thread của input. Vòng sửa 2: `asetnsamples=n=1024` ở cả hai đầu vào sidechain (app +4 / −2); 20/20 lần cùng hash ở mức filter graph, test lặp 6 lần song song trên FFmpeg 8 đều PASS. Nhỏ, không sửa: `build_render` đọc lại `shots.json` để lấy `music` (đã validate trong `load_shots`).
 - Important findings / decisions:
   - Chống rung: upscale lanczos lên canvas 3840×2160 (parallax 4608×2592) một lần rồi loop; `zoompan` (push / pull / pan) hoặc `crop` theo frame (parallax) trên canvas đó, rồi scale về 1080p.
   - Encode giữ 1 thread (`VIDEO` của animatic, `-filter_complex_threads 1`).

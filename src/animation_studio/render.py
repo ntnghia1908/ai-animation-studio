@@ -68,11 +68,13 @@ def _audio(shots: list[dict], music: Path | None, total: float, stage: Path) -> 
     output = "voice"
     if music:
         args += ["-stream_loop", "-1", "-i", str(music)]
+        # Fix both input frame sizes for deterministic threaded inputs on FFmpeg >= 7.
         filters += ["[voice]asplit[voiceout][sidechain]",
+                    "[sidechain]asetnsamples=n=1024[sidechainframes]",
                     f"[{len(voices)}:a]aresample=48000,aformat=channel_layouts=stereo,"
                     f"atrim=duration={total},asetpts=PTS-STARTPTS,volume=-18dB,"
-                    f"afade=t=out:st={max(0, total - 1)}:d={min(1, total)}[music]",
-                    "[music][sidechain]sidechaincompress=threshold=0.005:ratio=20:attack=5:release=100[ducked]",
+                    f"afade=t=out:st={max(0, total - 1)}:d={min(1, total)},asetnsamples=n=1024[music]",
+                    "[music][sidechainframes]sidechaincompress=threshold=0.005:ratio=20:attack=5:release=100[ducked]",
                     "[voiceout][ducked]amix=inputs=2:duration=first:normalize=0[mix]"]
         output = "mix"
     run_ffmpeg([*args, "-filter_complex_threads", "1", "-filter_complex", ";".join(filters),
