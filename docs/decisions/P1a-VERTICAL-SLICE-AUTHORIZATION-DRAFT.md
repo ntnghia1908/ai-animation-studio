@@ -2,13 +2,14 @@
 
 | Metadata | Value |
 |---|---|
-| Status | PROPOSED — chờ HUMAN LEAD |
+| Status | ACCEPTED |
+| Accepted by | HUMAN LEAD, 2026-10-23 (§6 đã trả lời) |
 | Date | 2026-10-23 |
 | Basis | `docs/decisions/ADR-001-mvp-architecture-and-phasing.md` (Option A, A3 ràng buộc tăng trưởng, A4 thứ tự) |
 | Requirement | `docs/product/requirements/REQ-001-animation-studio-mvp.md` (một phần, xem §7) |
 | Prerequisite | P0.1 đã merge (quality gate + CI) |
 
-Bản nháp không authorize gì. Có hiệu lực khi HUMAN LEAD đổi Status thành `ACCEPTED` và trả lời các decision ở §6.
+Boundary có hiệu lực từ 2026-10-23. Mỗi task P1a vẫn cần task contract được HUMAN LEAD duyệt trước khi implement.
 
 ## 1. Mục tiêu
 
@@ -89,14 +90,14 @@ audio/ (WAV/MP3)  ────┴► import-assets ─► asset manifest (sha256
 
 Ngưỡng đề xuất: không mục nào < 3 và mục tổng thể ≥ 4. Nếu không đạt thì lặp lại trong P1a, chưa mở P1b.
 
-## 6. Decision cần HUMAN LEAD trước khi ACCEPTED
+## 6. Decision của HUMAN LEAD (2026-10-23)
 
-| ID | Câu hỏi | Khuyến nghị |
+| ID | Câu hỏi | Quyết định |
 |---|---|---|
-| D-04 | Runtime trên server | Conda: **ACCEPTED**. Còn lại đề xuất: env riêng `animation-studio`, Python 3.12, `pyproject.toml` hatchling src-layout, `pip install -e ".[dev]"`, test `python -m pytest -q` |
-| D-08 | Truyện + asset pack cho P1a (HUMAN LEAD quyết trên server; chỉ cần trước P1a.4) | Một truyện ngắn có quyền rõ ràng. HUMAN LEAD chuẩn bị 1–2 nhân vật, 1–2 nền, ảnh cho 5–8 shot (1 shot có 2–3 layer PNG nền trong suốt), file giọng đọc. Trong lúc chờ, dev dùng asset tổng hợp |
-| P1a-1 | Vị trí workspace trên server | Thư mục ngoài repo, cấu hình bằng `config.toml` (gitignored) |
-| P1a-2 | Ngưỡng quality gate ở §5 | Chấp nhận như đề xuất hoặc chỉnh |
+| D-04 | Runtime trên server | **ACCEPTED**: conda env riêng `animation-studio`, Python 3.12, `pyproject.toml` hatchling src-layout, `pip install -e ".[dev]"`, test `python -m pytest -q` |
+| D-08 | Truyện + asset pack cho P1a | **ACCEPTED một phần**: dùng một truyện **Liêu Trai** ngắn để thử. HUMAN LEAD sẽ cung cấp nguồn (bản dịch / chuyển ngữ, quyền) sau; cần trước P1a.4. Asset: 1–2 nhân vật, 1–2 nền, ảnh cho 5–8 shot (1 shot có 2–3 layer PNG nền trong suốt), file giọng đọc. Trong lúc chờ, dev dùng asset tổng hợp |
+| P1a-1 | Vị trí workspace trên server | **ACCEPTED**: `~/animation-studio-data` (ngoài repo), cấu hình bằng `config.toml` (gitignored) |
+| P1a-2 | Ngưỡng quality gate ở §5 | **ACCEPTED** như đề xuất ở §5 |
 
 ## 7. Truy vết tới REQ-001
 

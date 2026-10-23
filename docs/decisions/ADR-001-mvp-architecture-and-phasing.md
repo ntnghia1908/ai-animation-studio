@@ -36,7 +36,7 @@ Bốn báo cáo trong `docs/research/` được chấp nhận làm **cơ sở đ
 | Phase | Nội dung | Trạng thái authorization |
 |---|---|---|
 | P0.1 | Sửa checker, bổ sung quality gate, hoàn thiện CI | `docs/decisions/P0.1-QUALITY-GATE-AUTHORIZATION-DRAFT.md` (ACCEPTED 2026-10-23; hoàn tất, PR #3) |
-| P1a | Vertical slice offline rất nhỏ: nhập truyện, ảnh / giọng, animatic, một đoạn phim có chuyển động | Draft: `docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md` (PROPOSED) |
+| P1a | Vertical slice offline rất nhỏ: nhập truyện, ảnh / giọng, animatic, một đoạn phim có chuyển động | `docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md` (ACCEPTED 2026-10-23) |
 | P1b | Review Studio, local AI, tích hợp provider | Chưa draft; chỉ xem xét **sau khi HUMAN LEAD xem video P1a** |
 
 Mỗi phase cần HUMAN LEAD chấp thuận boundary riêng. ADR này không authorize implementation.
@@ -49,8 +49,8 @@ Mỗi phase cần HUMAN LEAD chấp thuận boundary riêng. ADR này không aut
 | D-03 | Lưu trữ file JSON | **ACCEPTED** trong Option A (A2); SQLite xem lại khi cần |
 | D-01 | Framework adoption | **ACCEPTED** (HUMAN LEAD 2026-10-23; PR #1 merged `49295d0`) |
 | D-14 | Phê chuẩn P0 single-agent | **ACCEPTED** (HUMAN LEAD 2026-10-23) |
-| D-04 | Runtime / env / test command | **ACCEPTED một phần** (HUMAN LEAD 2026-10-23): môi trường server là **conda**. Python version, tên env, packaging và lệnh test vẫn là đề xuất trong P1a draft, chốt khi duyệt P1a |
-| D-08 | Truyện + asset cho P1a / pilot | Mở. HUMAN LEAD quyết khi đã lên server; cần trước P1a.4 (chạy thật), không chặn P1a.1–P1a.3 (dùng asset tổng hợp) |
+| D-04 | Runtime / env / test command | **ACCEPTED** (HUMAN LEAD 2026-10-23): conda env `animation-studio`, Python 3.12, hatchling src-layout, `python -m pytest -q` (P1a boundary §6) |
+| D-08 | Truyện + asset cho P1a / pilot | **ACCEPTED một phần** (HUMAN LEAD 2026-10-23): truyện Liêu Trai ngắn để thử; nguồn và quyền HUMAN LEAD cung cấp trước P1a.4. Không chặn P1a.1–P1a.3 (dùng asset tổng hợp) |
 | D-06 | TTS | Hoãn: P1a chỉ nhập audio; TTS xét ở P1b |
 | D-09 | Số shot pilot | Hoãn: P1a dùng 5–8 shot; pilot đầy đủ xét sau |
 | D-12 | Phong cách hình ảnh | Hoãn: P1a dùng ảnh nhập tay |

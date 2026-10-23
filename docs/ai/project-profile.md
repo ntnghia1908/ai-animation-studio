@@ -3,7 +3,7 @@
 | Metadata | Value |
 |---|---|
 | Status | CURRENT |
-| Project stage | P0 đã review (2026-10-23); P0.1 hoàn tất (PR #3); kế tiếp P1a → P1b theo ADR-001; boundary P1a chưa được authorize |
+| Project stage | P0 đã review (2026-10-23); P0.1 hoàn tất (PR #3); boundary P1a ACCEPTED (2026-10-23), chưa có task P1a nào; sau đó P1b theo ADR-001 |
 
 Canonical owner cho: project là gì, authority order, module map, project policy, integration mechanism, execution profile được phép, setup và Test policy.
 
@@ -21,7 +21,7 @@ Canonical owner cho: project là gì, authority order, module map, project polic
 
 ## 2. Authority order
 
-1. HUMAN LEAD decisions, approved task contracts và decision record `ACCEPTED` trong `docs/decisions/`. Hiện có: `docs/decisions/ADR-001-mvp-architecture-and-phasing.md` (ACCEPTED: Option A, ràng buộc tăng trưởng, thứ tự P0.1 → P1a → P1b, trạng thái D-01…D-14). `P0.1-QUALITY-GATE-AUTHORIZATION-DRAFT.md` (ACCEPTED, hoàn tất). Bản nháp `PROPOSED`: `P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md`. `P1-IMPLEMENTATION-AUTHORIZATION-DRAFT.md` đã `SUPERSEDED`.
+1. HUMAN LEAD decisions, approved task contracts và decision record `ACCEPTED` trong `docs/decisions/`. Hiện có: `docs/decisions/ADR-001-mvp-architecture-and-phasing.md` (ACCEPTED: Option A, ràng buộc tăng trưởng, thứ tự P0.1 → P1a → P1b, trạng thái D-01…D-14). `P0.1-QUALITY-GATE-AUTHORIZATION-DRAFT.md` (ACCEPTED, hoàn tất). `P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md` (ACCEPTED 2026-10-23). `P1-IMPLEMENTATION-AUTHORIZATION-DRAFT.md` đã `SUPERSEDED`.
 2. `docs/ai/workflow.md`, `docs/ai/execution-profiles.md` và file này cho workflow / policy.
 3. Requirement `READY` trong `docs/product/requirements/` cho hành vi sản phẩm (READY ≠ authorization). REQ-001 hiện là `NEEDS_CLARIFICATION`.
 4. Source code và tests hiện hành (chưa có).
@@ -85,7 +85,7 @@ HUMAN LEAD giữ: scope, architecture, dependency, provider / chi tiêu, chính 
 
 Project chọn `task` (cần APPROVE TASK) hoặc `boundary` (HUMAN LEAD cấp Implementation Authorization Boundary một lần). Ghi lựa chọn trong `framework.config.json` và không tự đổi giữa phiên.
 
-Project này dùng `boundary` (`framework.config.json`). Boundary đã duyệt: P0.1 (hoàn tất). Chưa có boundary P1a.
+Project này dùng `boundary` (`framework.config.json`). Boundary đã duyệt: P0.1 (hoàn tất); P1a (ACCEPTED 2026-10-23).
 
 ### Execution profile ưu tiên: native dual-agent
 
@@ -115,7 +115,7 @@ Cách chọn:
 ## 9. Setup / tools
 
 - Máy dev hiện tại (2026-10-23): laptop Windows 11, Intel Iris Xe (không có GPU NVIDIA), 16 GB RAM, Node 24, Python 3.13, FFmpeg build 2026-09, WSL Ubuntu (đang dừng). Chỉ dùng để phát triển. Production / GPU worker sẽ chạy trên server; cấu hình server chưa được xác nhận cho project này (`docs/research/PRODUCTION_COST_BENCHMARK.md` §Hardware).
-- Môi trường Python trên server: **conda** (D-04, HUMAN LEAD 2026-10-23). Tên env, Python version, packaging và dependency của ứng dụng chốt khi duyệt P1a (`docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md` §6).
+- Môi trường Python trên server: conda env `animation-studio`, Python 3.12 (D-04, HUMAN LEAD 2026-10-23). Packaging, dependency và lệnh test: `docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md` §3, §6.
 
 Framework checker: `node scripts/framework-check.mjs`.
 
