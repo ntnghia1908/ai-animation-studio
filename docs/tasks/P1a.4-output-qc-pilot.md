@@ -2,7 +2,7 @@
 
 ## Status / Approval
 
-- Status: IN_PROGRESS
+- Status: READY
 - Type: FEATURE
 - Change class: S1
 - Owner: HUMAN LEAD
@@ -21,7 +21,7 @@
 
 Lifecycle: `boundary` mode = `DRAFT → IN_PROGRESS → READY`. DONE suy ra từ Git sau khi merge.
 
-Task có hai phần:
+Task có hai phần (Status READY áp cho Phần A; Phần B ghi tiến độ ở mục Result):
 
 - **Phần A — code QC** (làm được ngay): READY → PR → HUMAN LEAD merge.
 - **Phần B — pilot asset thật + HUMAN LEAD chấm** (chặn bởi D-08): không sửa code, chạy trên server sau khi A merge; kết quả ghi vào Result của file này bằng một PR docs riêng. P1a chỉ đóng khi B đạt ngưỡng boundary §5.
@@ -163,16 +163,14 @@ Asset (HUMAN LEAD giao ORCHESTRATOR quyết giọng + nhạc):
 
 - Ảnh: HUMAN LEAD tạo bằng công cụ ngoài, 1672×941 (16:9, render upscale lên canvas 2×).
 - Giọng bản xem trước: Piper TTS 1.8.0 offline, giọng `vi_VN-vais1000-medium` (dataset VAIS-1000, CC BY 4.0), cài trong env tạm ngoài repo, không phải dependency của project; 0,3 s lặng đầu mỗi file.
-- Giọng thay thế đang xem xét: file đọc mẫu `008_bao_ung_hien_doi_tap_1_-_8.mp3` (audiobook *Báo Ứng Hiện Đời* tập 1, HUMAN LEAD cung cấp 2026-10-23); quyền bản thu như sách: chỉ demo nội bộ.
+- Giọng chính (mặc định trong `run.sh`): audiobook *Báo Ứng Hiện Đời* tập 1 do HUMAN LEAD cung cấp 2026-10-23; truyện 11 nằm ở track `006` từ 7:59 đến 12:29 (track `007` mở đầu truyện 12, track `008` là truyện 14–15). Mốc từng từ bằng faster-whisper 1.2.1 model `medium` (offline, env tạm ngoài repo); 8 đoạn cắt nguyên văn lời đọc (bỏ bớt vài vế để phim ≤ 60 s), phụ đề khớp lời đọc (`shots-audiobook.json`, 59,9 s). Quyền bản thu như sách: chỉ demo nội bộ.
 - Nhạc: pad ngũ cung tổng hợp bằng FFmpeg `aevalsrc` (CC0, tự tạo), −16,4 LUFS trước khi render hạ −18 dB.
 - Bản xem trước (workspace tạm, trước Phần A): 1920×1080, 30 fps, 50,000 s, −16,0 LUFS, không có khung đen, đứng hình chỉ trong shot `static` (38,2–43,7 s); lượt chạy đầu mất 7 phút 8 giây (render ~5 phút, 1 core).
 
 **Còn chờ HUMAN LEAD:**
 
-1. ~~Duyệt kịch bản~~ (xong). ~~Ảnh~~ (xong). ~~`config.toml`~~ (xong).
-2. Tên công cụ tạo ảnh cho provenance (`IMG_TOOL` trong `run.sh`).
-3. Chọn giọng: Piper hay bản đọc mẫu.
-4. Chạy pilot thật sau khi Phần A merge, xem phim, chấm 5 tiêu chí.
+1. ~~Duyệt kịch bản, ảnh, `config.toml`, công cụ tạo ảnh (ChatGPT)~~ (xong).
+2. Chạy pilot thật sau khi Phần A merge: `bash ~/animation-studio-pilot/to-kien/run.sh` (`VOICE=piper` cho bản TTS), xem phim, chấm 5 tiêu chí.
 
 Media pilot và `film.mp4` chỉ nằm trong workspace `~/animation-studio-data`, không commit.
 
@@ -189,12 +187,32 @@ Không dùng.
 
 ## Result
 
-- Main changes:
-- Tests: <bảng AC → test>
-- Diff + / − (app, test):
-- Helper mới (đã tìm, lý do không tái dùng):
-- Review:
+- Main changes (Phần A): `qc.py` mới (9 mục kiểm, `render/qc.json` atomic, tái tạo theo `input_key`); lệnh `check` (exit 0 / 2 / 1), `render` in kết quả QC; `media.fully_transparent` + cảnh báo khi `import-assets`; `render` dựng segment song song (`ThreadPoolExecutor`, ≤ 8 worker, FFmpeg mỗi worker 1 thread); README mục "Kiểm output".
+- IMPLEMENTER: `codex exec` (effort high, sandbox `workspace-write`), 1 lượt + 1 vòng sửa (`codex exec resume`), 116k + 148k tokens.
+- Tests (`python -m pytest -q`: 106 passed, FFmpeg 6.1.1):
+
+  | AC | Test |
+  |---|---|
+  | AC1 | `test_qc.py::test_format`, `test_duration_boundaries`, `test_lavfi_measurements` |
+  | AC2 | `test_qc.py::test_subtitles`, `test_render.py::test_timeline_format_subtitles_and_silence` |
+  | AC3 | `test_qc.py::test_lavfi_measurements` (đen ≥ 0,6 s) |
+  | AC4 | `test_qc.py::test_lavfi_measurements`, `test_moving_render_no_freeze` (3 camera ≥ 3 s), các ca biên freeze ở ranh giới shot (vòng sửa) |
+  | AC5 | `test_qc.py::test_lavfi_measurements`, `test_render.py::test_loudness_ducking_resume_pcm_and_atomic_output` |
+  | AC6, AC7, AC8 | `test_qc.py::test_reproducibility_alpha_atomic_and_cli`, `test_assets.py::test_fully_transparent_warning`, test render / loudness (exit code, output CLI, giữ phim) |
+  | AC9 | `test_render.py::test_parallel_segments_identity_and_failure` (barrier, byte giống hệt 1 worker, lỗi worker) |
+  | AC10 | full suite 106 passed |
+  | AC11 | `node scripts/quality-gate.mjs` PASS trong env `animation-studio`; CI: xem PR |
+
+- Chạy tay (ORCHESTRATOR), dùng asset pilot thật thay bộ tổng hợp của P1a.3 (đủ 5 kiểu camera + `static`, parallax 3 layer, 4 crossfade, giọng + nhạc):
+  - Bản giọng Piper (50,0 s): `check` → PASS cả 9 mục (`reproducible` SKIP lần đầu), QC mất 17 s. Render lần 1 (8 segment) 132 s so với ~300 s tuần tự; lần 2 (cache) 94 s; lần 3 sau khi xóa `segments/` 133 s; `reproducible` PASS ở lần 2 và 3; `film.mp4` song song giống từng byte bản dựng tuần tự.
+  - Bản giọng audiobook (59,9 s): QC PASS, render 156 s (chạy cùng lúc quality gate).
+- Diff + / − (app, test): app +210 / −8; test +219 / −6; README +14.
+- Helper mới (đã tìm, lý do không tái dùng): tìm bằng `rg -n 'def .*|pipeline|pcm|transparent|blackdetect|freezedetect|ebur128' src tests`. `media.fully_transparent` (chưa có kiểm alpha), `media._ffmpeg_bytes` (`run_ffmpeg` trả log text, cần stdout nhị phân), `qc.pcm` (chuyển từ `tests/test_render.py`, bản test đã xóa), các hàm kiểm thuần và `check_render`.
+- Review: ORCHESTRATOR review diff-first. F1 (vòng sửa): freeze bị coi là lỗi khi kéo dài một frame qua ranh giới shot `static` → `push_in` (pilot thật PASS chỉ nhờ trùng đúng 43,700 s); sửa: chỉ FAIL khi phần nằm ngoài cửa sổ `static` ≥ 0,5 s (qc +17 / −3, test +17). Không còn finding chặn.
 - Important findings / decisions:
-- Pilot (Phần B): <truyện, nguồn / quyền, số shot, thời lượng, qc.json tóm tắt, điểm HUMAN LEAD 5 tiêu chí>
-- Known limitations:
+  - `freezedetect` dùng `n=-70dB`: −60 dB báo nhầm đoạn đầu / cuối easing của `push_in` 3 s trên ảnh thưa.
+  - Song song chỉ tăng tốc bước segment (~2,3× toàn lệnh trên pilot); phần còn lại chủ yếu là encode cuối (`xfade` + burn phụ đề, 1 thread) ~75 s và QC 17 s.
+  - Lỗi trong một worker: chờ mọi worker xong, raise lỗi của shot đầu tiên theo thứ tự; segment thành công giữ trong cache.
+- Pilot (Phần B): bản xem trước đã có (`~/animation-studio-pilot/to-kien/preview/`), chưa chạy trên workspace thật, chưa có điểm HUMAN LEAD.
+- Known limitations: encode cuối vẫn 1 thread (bước chậm nhất; tăng thread không ảnh hưởng AC-006 nhưng cần task riêng); QC `black` không miễn cảnh tối; ngưỡng QC cố định.
 - PR:

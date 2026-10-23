@@ -5,11 +5,13 @@ import math
 import re
 import shutil
 import subprocess
+import threading
 
 import pytest
 
 from animation_studio import animatic, render
 from animation_studio.__main__ import main
+from animation_studio.qc import pcm
 from animation_studio.assets import import_assets
 from animation_studio.hashing import canonical_json, sha256_file
 from animation_studio.workspace import UserError, atomic_write_json, read_json
@@ -31,10 +33,6 @@ def box(pixels, channel):
     assert points
     xs, ys = zip(*points)
     return (sum(xs) / len(xs), sum(ys) / len(ys), max(xs) - min(xs))
-
-
-def pcm(path):
-    return ffmpeg("-i", path, "-vn", "-f", "s16le", "-").stdout
 
 
 @pytest.mark.parametrize("suffix", ["\nsize=N/A time=00:00:02.00 speed=10x\r\n", "\n"])
@@ -161,8 +159,20 @@ def test_loudness_ducking_resume_pcm_and_atomic_output(shot_project, make_wav, t
 
     monkeypatch.setattr(render, "run_ffmpeg", record)
     assert main(["--workspace", str(ws), "render", "p1"]) == 0
-    assert "render built=2 reused=1 ->" in capsys.readouterr().out
+    output = capsys.readouterr().out
+    assert "render built=2 reused=1 ->" in output and "qc FAIL ->" in output
+    assert "FAIL duration_range:" in output
     out = pdir / "render/film.mp4"
+    qc_path = out.parent / "qc.json"
+    checks = {c["name"]: c["status"] for c in read_json(qc_path)["checks"]}
+    assert checks == dict(format="PASS", duration_match="PASS", duration_range="FAIL", subtitles="PASS",
+                          black="PASS", freeze="PASS", loudness="PASS", reproducible="SKIP", layer_alpha="PASS")
+    assert main(["--workspace", str(ws), "render", "p1"]) == 0
+    assert next(c for c in read_json(qc_path)["checks"] if c["name"] == "reproducible")["status"] == "PASS"
+    previous_film = sha256_file(out)
+    assert main(["--workspace", str(ws), "check", "p1"]) == 2
+    assert sha256_file(out) == previous_film
+    assert next(c for c in read_json(qc_path)["checks"] if c["name"] == "reproducible")["status"] == "PASS"
     measured = ffmpeg("-v", "info", "-i", out, "-af", "ebur128", "-f", "null", "-").stderr.decode()
     assert abs(float(re.findall(r"I:\s+(-?[\d.]+) LUFS", measured)[-1]) + 16) <= 1
     assert any("linear=true" in arg for call in calls for arg in call)
@@ -196,7 +206,7 @@ def test_loudness_ducking_resume_pcm_and_atomic_output(shot_project, make_wav, t
     with pytest.raises(UserError, match="simulated"):
         render.build_render(ws, "p1")
     assert previous == (out.read_bytes(), (out.parent / "subtitles.srt").read_bytes())
-    assert sorted(p.name for p in out.parent.iterdir()) == ["film.mp4", "segments", "subtitles.srt"]
+    assert sorted(p.name for p in out.parent.iterdir()) == ["film.mp4", "qc.json", "segments", "subtitles.srt"]
 
 
 def test_animatic_cache_identity_and_music_ignored(shot_project):
@@ -210,3 +220,49 @@ def test_animatic_cache_identity_and_music_ignored(shot_project):
     key = hashlib.sha256(canonical_json(original).encode()).hexdigest()
     assert (pdir / f"animatic/segments/{key}.mp4").is_file()
     assert not any(pcm(pdir / "animatic/animatic.mp4"))
+
+
+@pytest.mark.parametrize("failure", [False, True])
+def test_parallel_segments_identity_and_failure(shot_project, monkeypatch, failure):
+    ws, pdir, assets = shot_project
+    atomic_write_json(pdir / "shots.json", dict(version=1, shots=[
+        dict(id=f"s{i}", image=assets[0], duration_s=seconds) for i, seconds in enumerate((0.2, 0.3, 0.4))]))
+    monkeypatch.setattr(render.os, "cpu_count", lambda: 1)
+    assert render.build_render(ws, "p1")[:2] == (3, 0)
+    out = pdir / "render"
+    original = (out / "film.mp4").read_bytes()
+    segments = {p.name: p.read_bytes() for p in (out / "segments").iterdir()}
+    for p in (out / "segments").iterdir():
+        p.unlink()
+    barrier, joined, lock = threading.Barrier(3, timeout=20), [], threading.Lock()
+    real = render.run_ffmpeg
+
+    def synchronized(args, cwd=None):
+        if str(args[-1]).endswith("segment.mp4"):
+            assert args[args.index("-threads") + 1] == "1"
+            assert args[args.index("-filter_complex_threads") + 1] == "1"
+            seconds = args[args.index("-t") + 1]
+            barrier.wait()  # All three FFmpeg calls must be in flight together.
+            try:
+                if failure and seconds != "0.4":
+                    from pathlib import Path
+                    Path(args[-1]).write_bytes(b"partial")
+                    raise UserError(f"segment {seconds}")
+                return real(args, cwd)
+            finally:
+                with lock:
+                    joined.append(seconds)
+        return real(args, cwd)
+
+    monkeypatch.setattr(render.os, "cpu_count", lambda: 32)
+    monkeypatch.setattr(render, "run_ffmpeg", synchronized)
+    if failure:
+        with pytest.raises(UserError, match="segment 0.2"):
+            render.build_render(ws, "p1")
+        assert sorted(joined) == ["0.2", "0.3", "0.4"]
+        remaining = list((out / "segments").iterdir())
+        assert len(remaining) == 1 and remaining[0].read_bytes() == segments[remaining[0].name]
+    else:
+        assert render.build_render(ws, "p1")[:2] == (3, 0)
+        assert segments == {p.name: p.read_bytes() for p in (out / "segments").iterdir()}
+    assert (out / "film.mp4").read_bytes() == original

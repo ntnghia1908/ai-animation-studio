@@ -1,4 +1,4 @@
-"""CLI: python -m animation_studio {import-story,import-assets,animatic,render}."""
+"""CLI: python -m animation_studio {import-story,import-assets,animatic,render,check}."""
 
 from __future__ import annotations
 
@@ -10,8 +10,9 @@ from .assets import import_assets
 from .animatic import build_animatic
 from .config import resolve_workspace
 from .render import build_render
+from .qc import check_render
 from .story import import_story
-from .workspace import UserError, validate_project_id
+from .workspace import UserError, project_dir, read_json, validate_project_id
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -40,6 +41,7 @@ def _parser() -> argparse.ArgumentParser:
     a.add_argument("--declared-cost-usd", type=float, default=0)
     sub.add_parser("animatic", help="build a static animatic from shots.json").add_argument("project")
     sub.add_parser("render", help="render camera motion, transitions and mixed audio").add_argument("project")
+    sub.add_parser("check", help="check the existing film and write render/qc.json").add_argument("project")
     return p
 
 
@@ -56,10 +58,20 @@ def main(argv: list[str] | None = None) -> int:
                     "declared_cost_usd": args.declared_cost_usd}
             added, skipped = import_assets(workspace, args.project, args.kind, args.files, meta)
             print(f"assets added={added} skipped={skipped}")
-        else:
+        elif args.command in ("animatic", "render"):
+            previous = read_json(project_dir(workspace, args.project) / "render/qc.json") if args.command == "render" else None
             builder = build_render if args.command == "render" else build_animatic
             built, reused, path = builder(workspace, args.project)
             print(f"{args.command} built={built} reused={reused} -> {path}")
+        if args.command in ("render", "check"):
+            report = check_render(workspace, args.project, previous if args.command == "render" else None,
+                                  compare=args.command == "render")
+            print(f"qc {report['overall']} -> {project_dir(workspace, args.project).resolve() / 'render/qc.json'}")
+            for item in report["checks"]:
+                if item["status"] in ("FAIL", "WARN"):
+                    print(f"{item['status']} {item['name']}: {item['detail'] or item['measured']}")
+            if args.command == "check" and report["overall"] == "FAIL":
+                return 2
     except UserError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1

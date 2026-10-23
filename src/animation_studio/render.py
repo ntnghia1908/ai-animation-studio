@@ -5,7 +5,9 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import os
 import tempfile
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from .animatic import AUDIO, VIDEO, run_ffmpeg, srt_cues, subtitle_filter
@@ -100,7 +102,7 @@ def build_render(workspace: Path, project_id: str) -> tuple[int, int, Path]:
     out = pdir / "render"
     cache = out / "segments"
     cache.mkdir(parents=True, exist_ok=True)
-    segments, built, reused = [], 0, 0
+    segments, pending, reused = [], {}, 0
     for i, shot in enumerate(shots):
         seconds = shot["duration_s"] + (0.5 if i < len(shots) - 1 and shot["transition"] == "crossfade" else 0)
         key = hashlib.sha256(canonical_json({
@@ -109,12 +111,19 @@ def build_render(workspace: Path, project_id: str) -> tuple[int, int, Path]:
             "pipeline": "cover2x-smoothstep-parallax-v1",
         }).encode("utf-8")).hexdigest()
         segment = cache / f"{key}.mp4"
-        if segment.is_file():
+        if segment.is_file() or segment in pending:
             reused += 1
         else:
-            _segment(shot, seconds, segment)
-            built += 1
+            pending[segment] = (shot, seconds)
         segments.append(segment)
+    built = len(pending)
+    if pending:
+        with ThreadPoolExecutor(max_workers=min(built, os.cpu_count() or 1, 8)) as pool:
+            futures = [pool.submit(_segment, shot, seconds, path)
+                       for path, (shot, seconds) in pending.items()]
+            # Ordered results select the first failing shot; context exit joins every worker.
+            for future in futures:
+                future.result()
     subtitles, cues = srt_cues(shots)
     target = out / "film.mp4"
     with tempfile.TemporaryDirectory(dir=out) as temp:

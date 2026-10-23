@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 from pathlib import Path
+import sys
 
 from .hashing import sha256_file
-from .media import probe
+from .media import fully_transparent, probe
 from .workspace import UserError, atomic_write_bytes, atomic_write_json, project_dir, read_json, utc_now
 
 DIRS = {"image": "images", "audio": "audio"}
@@ -26,6 +27,8 @@ def import_assets(workspace: Path, project_id: str, kind: str, files: list[Path]
         if not f.is_file():
             raise UserError(f"file not found: {f}")
         media = probe(f, kind)
+        if kind == "image" and fully_transparent(f):
+            print(f"warning: {f.name}: alpha = 0 everywhere (fully transparent)", file=sys.stderr)
         sha = sha256_file(f)
         if sha in known:
             skipped += 1

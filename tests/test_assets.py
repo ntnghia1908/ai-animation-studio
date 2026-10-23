@@ -74,3 +74,16 @@ def test_atomic_write_leaves_no_temp(tmp_path):
     atomic_write_json(p, {"a": 1})
     assert json.loads(p.read_text()) == {"a": 1}
     assert [x.name for x in p.parent.iterdir()] == ["f.json"]
+
+
+@pytest.mark.parametrize("alpha,patch,warn", [(True, False, True), (True, True, False), (False, False, False)])
+def test_fully_transparent_warning(tmp_path, make_png, capsys, alpha, patch, warn, monkeypatch):
+    from animation_studio import media
+    png = make_png("alpha.png", alpha=alpha, patch=patch, color="red@0")
+    if not alpha:
+        monkeypatch.setattr(media, "_ffmpeg_bytes", lambda args: pytest.fail("decoded image without alpha"))
+    ws = tmp_path / "ws"
+    assert run(ws, "--kind", "image", *META, str(png)) == 0
+    stderr = capsys.readouterr().err
+    assert ("warning: alpha.png: alpha = 0 everywhere (fully transparent)" in stderr) == warn
+    assert len(manifest(ws)) == 1 and "fully_transparent" not in manifest(ws)[0]

@@ -95,7 +95,7 @@ Ngưỡng đề xuất: không mục nào < 3 và mục tổng thể ≥ 4. Nế
 | ID | Câu hỏi | Quyết định |
 |---|---|---|
 | D-04 | Runtime trên server | **ACCEPTED**: conda env riêng `animation-studio`, Python 3.12, `pyproject.toml` hatchling src-layout, `pip install -e ".[dev]"`, test `python -m pytest -q` |
-| D-08 | Truyện + asset pack cho P1a | **ACCEPTED một phần**: dùng một truyện **Liêu Trai** ngắn để thử. HUMAN LEAD sẽ cung cấp nguồn (bản dịch / chuyển ngữ, quyền) sau; cần trước P1a.4. Asset: 1–2 nhân vật, 1–2 nền, ảnh cho 5–8 shot (1 shot có 2–3 layer PNG nền trong suốt), file giọng đọc. Trong lúc chờ, dev dùng asset tổng hợp |
+| D-08 | Truyện + asset pack cho P1a | **ACCEPTED một phần**: dùng một truyện **Liêu Trai** ngắn để thử. HUMAN LEAD sẽ cung cấp nguồn (bản dịch / chuyển ngữ, quyền) sau; cần trước P1a.4. Asset: 1–2 nhân vật, 1–2 nền, ảnh cho 5–8 shot (1 shot có 2–3 layer PNG nền trong suốt), file giọng đọc. Trong lúc chờ, dev dùng asset tổng hợp. Cập nhật HUMAN LEAD 2026-10-23: pilot dùng truyện "Tổ kiến và nhà ở" (*Báo Ứng Hiện Đời* tập 1, Cư sĩ Quả Khanh, Hạnh Đoan dịch) thay truyện Liêu Trai; quyền bản dịch / audiobook chưa xác nhận → chỉ demo nội bộ (`docs/tasks/P1a.4-output-qc-pilot.md`) |
 | P1a-1 | Vị trí workspace trên server | **ACCEPTED**: `~/animation-studio-data` (ngoài repo), cấu hình bằng `config.toml` (gitignored) |
 | P1a-2 | Ngưỡng quality gate ở §5 | **ACCEPTED** như đề xuất ở §5 |
 
