@@ -21,6 +21,12 @@ File này chỉ ghi lịch sử; rule hiện hành nằm ở canonical owner c�
 - Decision: HUMAN LEAD 2026-10-08.
 - Task: TASK-002-boundary-authorization-parallel.
 
+### P0.1 — sửa product-check.mjs — 2026-10-23
+
+- Thay đổi: `scripts/product-check.mjs` đổi escape sai (`\\.`, `\\n`, `\\s`, `\\S`, `\\d`, `\\b`) trong regex literal thành escape đơn; luật READY giữ nguyên. Thêm `tests/product-check.test.mjs` (gồm test hồi quy so với bản `76abae8`). Đây là thay đổi checker của project, không phải Framework Core; không tăng version.
+- Lý do: bản của kit luôn FAIL giả (filename, frontmatter) với REQ hợp lệ. Bản vá và báo lỗi upstream: `docs/tasks/P0.1-checker-quality-gate-ci.md`, mục Result.
+- Task: P0.1 (`docs/tasks/P0.1-checker-quality-gate-ci.md`); PR/commit: chờ integration.
+
 ### FW-GROWTH-01 — 2026-10-19
 
 - Thay đổi: `docs/ai/workflow.md` §4 mục contract "Code bị thay / xóa"; §5 tái dùng trước khi viết; §7 READY report có AC → test, dòng thêm / xóa, helper mới. Template task + adapter dẫn chiếu owner.

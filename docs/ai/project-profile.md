@@ -119,12 +119,14 @@ Cách chọn:
 
 Framework checker: `node scripts/framework-check.mjs`.
 
+Quality gate (canonical, local và CI): `node scripts/quality-gate.mjs` — framework-check, product-check cho mọi REQ, `node --test`, kiểm file cấm (media > 1 MB, file > 5 MB, `.env` / `config.toml` bị track); có `pyproject.toml` thì thêm `python -m pytest -q`.
+
 ### Test policy
 
 Canonical owner; áp dụng cho mọi IMPLEMENTER bất kể tool.
 
 - Trong vòng sửa: chạy test liên quan tới thay đổi (file hoặc bộ lọc theo tên), ưu tiên dừng ở lỗi đầu tiên với traceback ngắn.
 - Toàn bộ suite: một lần trước khi báo READY và một lần sau mỗi vòng fix review; không chạy toàn bộ sau từng lần sửa.
-- Lệnh chuẩn chạy toàn bộ suite: chưa có (chưa có source / test). Đề xuất cho P1: `python -m pytest -q`; chốt cùng decision runtime P1. Trong P0 chỉ có `node scripts/framework-check.mjs`.
+- Lệnh chuẩn chạy toàn bộ suite: `node scripts/quality-gate.mjs` (gồm `node --test`). Đề xuất cho P1: thêm `python -m pytest -q`; chốt cùng decision runtime P1.
 - Test không được gọi dịch vụ thật (API AI trả phí, Ollama, mạng ngoài); provider dùng fake / fixture.
 - Không nới `docs/ai/workflow.md` §7: required verification trong task contract vẫn phải chạy và PASS trước READY.
