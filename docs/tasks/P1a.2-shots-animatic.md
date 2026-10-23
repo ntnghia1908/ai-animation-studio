@@ -2,7 +2,7 @@
 
 ## Status / Approval
 
-- Status: IN_PROGRESS
+- Status: READY
 - Type: FEATURE
 - Change class: S1
 - Owner: HUMAN LEAD
@@ -141,11 +141,22 @@ Không dùng.
 
 ## Result
 
-- Main changes:
-- Tests:
-- Diff + / − (app, test):
-- Helper mới (đã tìm, lý do không tái dùng):
-- Review:
-- Important findings / decisions:
-- Known limitations:
+- Main changes: `shots.py` (validate `shots.json` v1), `animatic.py` (segment / shot có cache, concat `-c copy`, burn SRT bằng Be Vietnam Pro), lệnh CLI `animatic`, `canonical_json` chép lại vào `hashing.py`, font + `OFL.txt` trong `src/animation_studio/fonts/` (khớp byte với `youtube-auto-short@f47813d`), README.
+- IMPLEMENTER: `codex exec` (Codex CLI 0.163.0, model `gpt-6.1-sol`, effort high, sandbox `workspace-write`), 1 lượt, khoảng 77k tokens, 0 vòng sửa.
+- Tests (`python -m pytest -q`: 46 passed):
+
+  | AC | Test |
+  |---|---|
+  | AC1 | `test_shots.py::test_invalid_shots_exit_without_output` (parametrize 23 ca) |
+  | AC2 | `test_shots.py::test_duration_resolution_and_defaults` (3 ca) |
+  | AC3–AC6 | `test_animatic.py::test_output_subtitles_layers_and_resume` (probe, pad, pixel layer, cue SRT, mtime / `built` / `reused`); `::test_no_subtitles_and_failed_final_keeps_output` |
+  | AC7 | full suite; guard `_no_real_services` |
+  | AC8 | `node scripts/quality-gate.mjs` PASS trong env `animation-studio`; CI: xem PR |
+
+- Chạy tay (ORCHESTRATOR), 3 shot với ảnh 4:3, 2 layer, phụ đề có dấu: 1920×1080, 30/1, h264 + aac, thời lượng 6,505 s (kỳ vọng 6,5); SRT 0–2,5 / 2,5–4,5 / 4,5–6,5; frame trích ra đúng pad, layer chồng đúng, dấu tiếng Việt hiển thị đúng; chạy lại `built=0 reused=3`; đổi layer một shot `built=1 reused=2`. Thời gian dựng 6,5 s phim: khoảng 14 s.
+- Diff + / − (app, test): app +205 / −3; test +192 / −2; README +26; `OFL.txt` +93; font TTF 132.948 byte.
+- Helper mới (đã tìm, lý do không tái dùng): tìm bằng `rg '^(def |class )|subprocess|canonical_json' src/ tests/`. Mới: `load_shots` (chưa có validate schema), `_run`, `_segment`, `_timestamp`, `build_animatic` (chưa có encode FFmpeg / SRT); fixture `shot_project`, helper test `pixels`. Tái dùng: `workspace.*`, `sha256_file`, `media.probe`, `make_png`, `make_wav`.
+- Review: ORCHESTRATOR review diff-first; không có finding chặn.
+- Important findings / decisions: encode dùng `-threads 1` để output ổn định giữa các lần chạy (phục vụ AC-006 ở P1a.4), đổi lại chậm hơn. Concat qua symlink tên ngắn trong thư mục tạm để tránh lỗi quote với đường dẫn workspace có dấu / nháy.
+- Known limitations: resume chỉ tái dùng segment; concat và burn phụ đề luôn chạy lại. Layer PNG trong suốt hoàn toàn (alpha = 0 mọi nơi) vẫn nhập được và không có cảnh báo (gặp khi chạy tay với asset thử); xem xét kiểm ở P1a.4.
 - PR:
