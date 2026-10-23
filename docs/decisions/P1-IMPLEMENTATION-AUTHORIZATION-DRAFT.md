@@ -2,11 +2,13 @@
 
 | Metadata | Value |
 |---|---|
-| Status | PROPOSED — chờ HUMAN LEAD |
+| Status | SUPERSEDED — HUMAN LEAD 2026-10-23 không duyệt P1.0–P1.8 một lần; xem `docs/decisions/ADR-001-mvp-architecture-and-phasing.md` |
 | Date | 2026-10-23 |
 | Proposed by | ORCHESTRATOR (Claude Code) |
 | Requirement | `docs/product/requirements/REQ-001-animation-studio-mvp.md` (NEEDS_CLARIFICATION) |
 | Architecture | `docs/architecture/ARCHITECTURE_PROPOSAL.md` (PROPOSAL, Option A đề xuất) |
+
+> **SUPERSEDED (2026-10-23).** HUMAN LEAD chấp nhận hướng kiến trúc (Option A), nhưng tách P1 thành P0.1 → P1a → P1b. Boundary hiện hành dạng nháp: `docs/decisions/P0.1-QUALITY-GATE-AUTHORIZATION-DRAFT.md`, `docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md`. Trạng thái D-01…D-14: `docs/decisions/ADR-001-mvp-architecture-and-phasing.md` A5. File này chỉ còn là lịch sử.
 
 **Bản nháp này không authorize gì.** Nó chỉ có hiệu lực khi HUMAN LEAD trả lời các decision ở §6 và đổi Status thành `ACCEPTED` (kèm ngày, phạm vi đã sửa). Khi đó task contract P1 dùng `Authorization mode: boundary` và `Authorization source: docs/decisions/P1-IMPLEMENTATION-AUTHORIZATION-DRAFT.md (ACCEPTED <ngày>)`.
 

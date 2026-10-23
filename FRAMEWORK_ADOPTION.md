@@ -4,7 +4,7 @@
 
 - Framework kit: `ntnghia1908/ai-dev-framework`, nhánh `main` @ `7496eac` (merge PR #11, FW-GROWTH-01). `VERSION` = `4.4`; Core `docs/ai/workflow.md` Version `4.4`. Kit chưa có tag `v4.4` (tag mới nhất `v4.2`), nên adoption ghi theo commit, không theo tag.
 - Lưu ý: bản clone local `ai-dev-framework/` trong workspace đang ở `d7df465` (cũ hơn `origin/main` 8 commit). Adoption dùng snapshot `git archive origin/main` @ `7496eac`; bản clone local không bị sửa.
-- Adoption date / decision: 2026-10-23, theo yêu cầu kickoff của HUMAN LEAD ("AI Animation Studio — Master Project Kickoff", §1, §11, §12). Chờ HUMAN LEAD xác nhận khi review PR P0.
+- Adoption date / decision: 2026-10-23, theo yêu cầu kickoff của HUMAN LEAD ("AI Animation Studio — Master Project Kickoff", §1, §11, §12). HUMAN LEAD chấp nhận adoption (D-01, 2026-10-23); PR #1 merged `49295d0`.
 
 Thay đổi framework sau adoption ghi ở `docs/ai/framework-history.md`.
 
@@ -33,7 +33,7 @@ Thay đổi framework sau adoption ghi ở `docs/ai/framework-history.md`.
 ## Adoption boundary
 
 - Adoption **không** authorize implementation của bất kỳ module nào (M1–M10), không duyệt architecture, dependency, dịch vụ ngoài hay chi tiêu.
-- Adoption không duyệt Implementation Authorization Boundary P1. Bản nháp nằm ở `docs/decisions/P1-IMPLEMENTATION-AUTHORIZATION-DRAFT.md` (Status PROPOSED).
+- Adoption không duyệt Implementation Authorization Boundary nào. Thứ tự và trạng thái: `docs/decisions/ADR-001-mvp-architecture-and-phasing.md`; bản nháp P0.1 / P1a ở `docs/decisions/` (PROPOSED).
 - Không sửa Framework Core. Rule riêng project đặt ở `docs/ai/project-profile.md` hoặc decision record.
 
 ## Verification status

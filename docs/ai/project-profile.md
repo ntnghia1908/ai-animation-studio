@@ -3,7 +3,7 @@
 | Metadata | Value |
 |---|---|
 | Status | CURRENT |
-| Project stage | P0 — Research & Framework Bootstrap (chưa có source ứng dụng; P1 chưa được authorize) |
+| Project stage | P0 đã review (2026-10-23); kế tiếp P0.1 → P1a → P1b theo ADR-001; chưa có boundary nào được authorize |
 
 Canonical owner cho: project là gì, authority order, module map, project policy, integration mechanism, execution profile được phép, setup và Test policy.
 
@@ -21,19 +21,19 @@ Canonical owner cho: project là gì, authority order, module map, project polic
 
 ## 2. Authority order
 
-1. HUMAN LEAD decisions, approved task contracts và decision record `ACCEPTED` trong `docs/decisions/`. Hiện **chưa có** decision `ACCEPTED` nào của project; `docs/decisions/P1-IMPLEMENTATION-AUTHORIZATION-DRAFT.md` là `PROPOSED`.
+1. HUMAN LEAD decisions, approved task contracts và decision record `ACCEPTED` trong `docs/decisions/`. Hiện có: `docs/decisions/ADR-001-mvp-architecture-and-phasing.md` (ACCEPTED: Option A, ràng buộc tăng trưởng, thứ tự P0.1 → P1a → P1b, trạng thái D-01…D-14). Bản nháp `PROPOSED`: `P0.1-QUALITY-GATE-AUTHORIZATION-DRAFT.md`, `P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md`. `P1-IMPLEMENTATION-AUTHORIZATION-DRAFT.md` đã `SUPERSEDED`.
 2. `docs/ai/workflow.md`, `docs/ai/execution-profiles.md` và file này cho workflow / policy.
 3. Requirement `READY` trong `docs/product/requirements/` cho hành vi sản phẩm (READY ≠ authorization). REQ-001 hiện là `NEEDS_CLARIFICATION`.
 4. Source code và tests hiện hành (chưa có).
 5. `docs/workflow/current-state.md` chỉ là operational state, không phải authority.
-6. `docs/research/*`, `docs/architecture/ARCHITECTURE_PROPOSAL.md`, `docs/roadmap/IMPLEMENTATION_ROADMAP.md`: bằng chứng và đề xuất, **không phải** authority cho tới khi HUMAN LEAD chuyển phần liên quan thành decision record.
+6. `docs/research/*` (được chấp nhận làm cơ sở định hướng — ADR-001 A1), `docs/architecture/ARCHITECTURE_PROPOSAL.md`, `docs/roadmap/IMPLEMENTATION_ROADMAP.md`: bằng chứng và đề xuất, **không phải** authority trừ phần đã chuyển vào decision record.
 7. `README.md` và tài liệu onboarding chỉ mô tả / cross-link.
 
-Chưa có authority cho: architecture, storage / schema, dependency, security model của web UI, public API, provider AI trả phí, chính sách nội dung Phật giáo. Phải tạo authority tương ứng trước khi implement phần chạm vào các boundary này.
+Đã có authority cho hướng architecture + lưu trữ file workspace (ADR-001). Chưa có authority cho: schema chi tiết, dependency, security model của web UI, public API, provider AI trả phí, chính sách nội dung Phật giáo. Phải tạo authority tương ứng trước khi implement phần chạm vào các boundary này.
 
 ## 3. Module map
 
-Tất cả đều **planned**; chưa có module nào implemented. Ranh giới đề xuất ở `docs/architecture/ARCHITECTURE_PROPOSAL.md` (chưa được chấp thuận).
+Tất cả đều **planned**; chưa có module nào implemented. Hướng: Option A (ADR-001). Ranh giới chi tiết ở `docs/architecture/ARCHITECTURE_PROPOSAL.md` §7 vẫn là đề xuất; chỉ tạo module khi vertical slice cần (ADR-001 A3). P1a chỉ dùng phần nhỏ: workspace, import truyện / asset, shots, animatic, render (`docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md` §3).
 
 | Path (đề xuất) | Vai trò | Trạng thái | Rule riêng |
 |---|---|---|---|
@@ -115,7 +115,7 @@ Cách chọn:
 ## 9. Setup / tools
 
 - Máy dev hiện tại (2026-10-23): laptop Windows 11, Intel Iris Xe (không có GPU NVIDIA), 16 GB RAM, Node 24, Python 3.13, FFmpeg build 2026-09, WSL Ubuntu (đang dừng). Chỉ dùng để phát triển. Production / GPU worker sẽ chạy trên server; cấu hình server chưa được xác nhận cho project này (`docs/research/PRODUCTION_COST_BENCHMARK.md` §Hardware).
-- Runtime, package manager và dependency của ứng dụng: **chưa chốt**, là decision gate của P1 (đề xuất trong `docs/architecture/ARCHITECTURE_PROPOSAL.md`).
+- Môi trường Python trên server: **conda** (D-04, HUMAN LEAD 2026-10-23). Tên env, Python version, packaging và dependency của ứng dụng chốt khi duyệt P1a (`docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md` §6).
 
 Framework checker: `node scripts/framework-check.mjs`.
 

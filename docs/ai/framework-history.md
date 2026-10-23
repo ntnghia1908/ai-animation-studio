@@ -53,4 +53,4 @@ File này chỉ ghi lịch sử; rule hiện hành nằm ở canonical owner c�
 
 - Thay đổi: adopt Framework kit v4.4 (`ntnghia1908/ai-dev-framework` `main` @ `7496eac`, gồm FW-GROWTH-01 và FW-TOKEN-01). Chi tiết: `FRAMEWORK_ADOPTION.md`.
 - Lý do: HUMAN LEAD kickoff AI Animation Studio (P0) yêu cầu dùng AI Dev Framework v4.4 hiện có.
-- PR: PR P0 của branch `feature/p0-research-bootstrap` (chờ HUMAN LEAD review / merge).
+- PR: #1 (merged `49295d0`, 2026-10-23); decision D-01 ACCEPTED.

@@ -10,20 +10,24 @@ Ngân sách token của file: xem `docs/ai/workflow.md` §10.
 
 ## Current focus
 
-P0 — Research & Framework Bootstrap (`docs/tasks/P0-research-bootstrap.md`). Gate hiện tại: **P0 READY FOR HUMAN REVIEW — P1 NOT YET AUTHORIZED**.
+- P0 đã được HUMAN LEAD review (2026-10-23). Research và Option A được chấp nhận. Thứ tự P0.1 → P1a → P1b (`docs/decisions/ADR-001-mvp-architecture-and-phasing.md`).
+- Việc chuyển sang server: HUMAN LEAD clone repo về server và làm tiếp ở đó. Laptop chỉ là máy dev.
 
 ## Next proposed action
 
 PROPOSED, không authorize implementation:
 
-1. HUMAN LEAD review PR P0 và trả lời các decision D-01…D-14 (`docs/decisions/P1-IMPLEMENTATION-AUTHORIZATION-DRAFT.md` §6).
-2. Nếu duyệt: chạy các experiment E1–E6 không tốn phí (`docs/research/ANIMATION_WORKFLOW_RESEARCH.md` §9) song song với task S1 đầu tiên của P1 (pilot adoption framework).
+1. PR #1 đã merge (`49295d0`); D-01, D-14 ACCEPTED. HUMAN LEAD merge PR #2 (ADR-001 + bản nháp P0.1 / P1a).
+2. HUMAN LEAD duyệt `docs/decisions/P0.1-QUALITY-GATE-AUTHORIZATION-DRAFT.md`. Sau đó thực hiện `docs/tasks/P0.1-checker-quality-gate-ci.md` trên server, branch `chore/p0.1-quality-gate`; push workflow qua SSH hoặc token có scope `workflow`.
+3. Trên server: tạo conda env (D-04); HUMAN LEAD quyết D-08 (truyện + asset pack: ảnh 5–8 shot, 1 shot có 2–3 layer, file giọng) trước P1a.4.
 
 ## Open decisions
 
-Danh sách D-01…D-14 ở `docs/decisions/P1-IMPLEMENTATION-AUTHORIZATION-DRAFT.md` §6. Quan trọng nhất: kiến trúc MVP (D-02), GPU server dùng được cho project (D-07), truyện pilot và quyền bản dịch (D-08), engine TTS (D-06).
+- Cho P0.1: duyệt boundary P0.1 (D-01, D-14 đã ACCEPTED).
+- Cho P1a: duyệt boundary P1a; phần còn lại của D-04 (env name, Python version); D-08 (trên server); P1a-1 (vị trí workspace); P1a-2 (ngưỡng quality gate).
+- Hoãn tới P1b: D-05, D-06, D-07, D-09, D-10, D-11, D-12, D-13 (ADR-001 A5).
 
 ## Blockers
 
-- Chưa xác nhận cấu hình GPU server cho project này. Laptop dev không có GPU NVIDIA nên không benchmark được local image-to-video.
-- `scripts/product-check.mjs` của kit có lỗi regex (finding ngoài scope; chi tiết ở `FRAMEWORK_ADOPTION.md`).
+- Token `gh` trên laptop thiếu scope `workflow` → không push được file `.github/workflows/`. Trên server dùng SSH hoặc `gh auth refresh -s workflow`.
+- `scripts/product-check.mjs` có lỗi regex; sẽ sửa ở P0.1.
