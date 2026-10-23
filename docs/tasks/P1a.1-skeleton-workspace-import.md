@@ -2,7 +2,7 @@
 
 ## Status / Approval
 
-- Status: IN_PROGRESS
+- Status: READY
 - Type: FEATURE
 - Change class: S1
 - Owner: HUMAN LEAD
@@ -121,11 +121,23 @@ Không dùng.
 
 ## Result
 
-- Main changes:
-- Tests:
-- Diff + / − (app, test):
-- Helper mới (đã tìm, lý do không tái dùng):
-- Review:
-- Important findings / decisions:
-- Known limitations:
+- Main changes: package `src/animation_studio/` (`__main__`, `config`, `workspace`, `hashing`, `media`, `story`, `assets`), `pyproject.toml`, `.gitignore`, `config.example.toml`; CI cài Python 3.12 + FFmpeg + package; README setup / usage.
+- Tests (`python -m pytest -q`: 18 passed):
+
+  | AC | Test |
+  |---|---|
+  | AC1 | `test_cli.py::test_help_lists_commands`; `pip install -e ".[dev]"` trong env `animation-studio` (ORCHESTRATOR) |
+  | AC2 | `test_cli.py::test_workspace_from_config_expands_home`, `::test_bad_project_id_no_files` (param ×3), `::test_missing_workspace_and_config`, `::test_gitignore_and_example`; `git check-ignore config.toml` |
+  | AC3 | `test_story.py::test_import_verbatim_and_metadata`, `::test_required_flags`, `::test_reimport_same_unchanged_different_rejected` |
+  | AC4 | `test_assets.py::test_image_manifest_and_alpha` (param alpha), `::test_audio_manifest`, `::test_license_required` |
+  | AC5 | `test_assets.py::test_duplicate_sha_not_copied`, `::test_bad_file_in_batch_changes_nothing` (param `.gif` / PNG hỏng) |
+  | AC6 | `test_assets.py::test_atomic_write_leaves_no_temp`; nguồn ghi trong docstring `workspace.py`, `hashing.py`, `media.py`, `conftest.py` |
+  | AC7 | guard autouse `tests/conftest.py::_no_real_services`; media sinh bằng FFmpeg trong `tmp_path` |
+  | AC8 | `node scripts/quality-gate.mjs` PASS local (có bước pytest); CI: xem PR |
+
+- Diff + / − (app, test): app +332 / −0 (`src/` 313 + `pyproject.toml` 19); test +227 / −0; `quality.yml` +7 / −0; `README.md` +26 / −1.
+- Helper mới (đã tìm, lý do không tái dùng): repo chưa có source trước task. Chép từ `youtube-auto-short@f47813d`: `atomic_write_bytes`, `atomic_write_json`, `utc_now`, `sha256_file`, guard `_no_real_services`, dạng probe. Viết mới (không có bản tương đương): `read_json`, `validate_project_id`, `project_dir`, `UserError`, `resolve_workspace`, `media.probe`.
+- Review: ORCHESTRATOR review diff-first, không có finding chặn. Đã sửa tại chỗ: bỏ `canonical_json` (chưa dùng, ADR-001 A3; chép lại khi render key cần); `import-story` ghi `story.json` trước `source.txt` để crash giữa chừng được làm lại; bỏ import thừa trong test.
+- Important findings / decisions: thư mục `assets/audio/` (không phải `audios`); manifest thêm `size_bytes`, audio thêm `sample_rate`, `channels`; `media.probe` từ chối ảnh thiếu `width` / `height` / `pix_fmt` (ffprobe nhận file text là video stream). Chạy tay: `import-story` (imported → unchanged), `import-assets` PNG RGBA (`pix_fmt: rgba`) + WAV 3 s (`duration_s: 3.0`) vào workspace tạm: đạt.
+- Known limitations: lô asset chỉ all-or-nothing ở bước validate; lỗi IO khi đang chép có thể để lại file asset mồ côi (manifest không đổi, nhập lại sẽ ghi đè cùng tên). `project_id` bắt đầu bằng `-` bị argparse hiểu là option.
 - PR:
