@@ -12,15 +12,15 @@ Ngân sách token của file: xem `docs/ai/workflow.md` §10.
 
 - P0 đã được HUMAN LEAD review (2026-10-23). Research và Option A được chấp nhận. Thứ tự P0.1 → P1a → P1b (`docs/decisions/ADR-001-mvp-architecture-and-phasing.md`).
 - P0.1 hoàn tất (PR #3, `98fdf00`). Gate: `node scripts/quality-gate.mjs`; CI "Quality" chạy trên mọi PR.
-- Boundary P1a ACCEPTED (2026-10-23): `docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md`. P1a.1 (import) đã merge (PR #6). P1a.2 (`shots.json` + animatic) READY: `docs/tasks/P1a.2-shots-animatic.md`.
+- Boundary P1a ACCEPTED (2026-10-23): `docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md`. P1a.1 (PR #6), P1a.2 (PR #8) đã merge. P1a.3 (motion render) READY: `docs/tasks/P1a.3-motion-render.md`.
 - Làm việc trên server; laptop chỉ là máy dev.
 
 ## Next proposed action
 
 PROPOSED, không authorize implementation:
 
-1. HUMAN LEAD merge PR P1a.2. Trên server: `cp config.example.toml config.toml` (conda env `animation-studio` đã tạo).
-2. ORCHESTRATOR soạn task contract P1a.3 (camera move, parallax, crossfade, nhạc nền, loudness) để HUMAN LEAD duyệt.
+1. HUMAN LEAD merge PR P1a.3. Trên server: `cp config.example.toml config.toml` (conda env `animation-studio` đã tạo).
+2. ORCHESTRATOR soạn task contract P1a.4 (kiểm output tự động: blackdetect / freezedetect, 30–60 s, tái tạo; pilot asset thật) để HUMAN LEAD duyệt.
 3. HUMAN LEAD cung cấp nguồn truyện Liêu Trai (bản dịch / quyền) và asset pack trước P1a.4.
 4. HUMAN LEAD (tùy chọn) bật required status check "Quality" cho `main`; gửi báo lỗi `product-check.mjs` lên kit.
 

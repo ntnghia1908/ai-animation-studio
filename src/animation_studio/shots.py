@@ -9,6 +9,21 @@ from pathlib import Path
 from .workspace import UserError, read_json
 
 
+def _asset(pdir, assets, value, field, kind, label):
+    reason = None
+    if not isinstance(value, str) or value not in assets:
+        reason = "asset not in assets/manifest.json"
+    else:
+        path = (pdir / value).resolve()
+        if Path(value).is_absolute() or not path.is_relative_to(pdir.resolve()) or not path.is_file():
+            reason = "asset must be an existing project-relative file"
+        elif assets[value].get("kind") != kind:
+            reason = f"asset kind must be {kind}"
+    if reason:
+        raise UserError(f"{label}: {field}: {reason}")
+    return path
+
+
 def load_shots(pdir: Path) -> list[dict]:
     try:
         data = read_json(pdir / "shots.json")
@@ -22,6 +37,8 @@ def load_shots(pdir: Path) -> list[dict]:
     if not isinstance(manifest, dict) or not isinstance(manifest.get("assets"), list):
         raise UserError("shots.json (root): assets/manifest.json: invalid assets list")
     assets = {a["path"]: a for a in manifest["assets"] if isinstance(a, dict) and isinstance(a.get("path"), str)}
+    if "music" in data:
+        _asset(pdir, assets, data["music"], "music", "audio", "shots.json (root)")
     seen, resolved = set(), []
     for index, shot in enumerate(data["shots"]):
         label = f"shot[{index}]" + (f" ({shot.get('id')})" if isinstance(shot, dict) else "")
@@ -35,14 +52,7 @@ def load_shots(pdir: Path) -> list[dict]:
             return float(value)
 
         def asset(value, field, kind):
-            if not isinstance(value, str) or value not in assets:
-                fail(field, "asset not in assets/manifest.json")
-            path = (pdir / value).resolve()
-            if Path(value).is_absolute() or not path.is_relative_to(pdir.resolve()) or not path.is_file():
-                fail(field, "asset must be an existing project-relative file")
-            if assets[value].get("kind") != kind:
-                fail(field, f"asset kind must be {kind}")
-            return path
+            return _asset(pdir, assets, value, field, kind, label)
 
         if not isinstance(shot, dict):
             fail("shot", "must be an object")

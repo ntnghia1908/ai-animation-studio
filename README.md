@@ -44,6 +44,19 @@ Output: `<project>/animatic/animatic.mp4` (1080p, 30 fps, H.264/AAC), plus `subt
 Vietnamese subtitles use the bundled Be Vietnam Pro font (SIL OFL).
 Unchanged segments in `animatic/segments/` are reused; deleting that cache is safe.
 
+## Render
+
+```bash
+python -m animation_studio render my-story
+```
+
+Uses the same shots, with smooth camera moves, layered parallax and 0.5 s crossfades.
+Use 16:9 images: render fills the frame and crops excess edges. Optional root field
+`"music": "assets/audio/<music>.wav"` selects imported audio from the manifest;
+render loops/trims it and ducks it under voices. Animatic ignores this field.
+Output: `<project>/render/{film.mp4, subtitles.srt, segments/}` (1080p H.264/AAC,
+30 fps, target −16 LUFS). Unchanged video segments are reused; the cache is disposable.
+
 ## Test
 
 ```bash

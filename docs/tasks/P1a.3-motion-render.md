@@ -2,7 +2,7 @@
 
 ## Status / Approval
 
-- Status: IN_PROGRESS
+- Status: READY
 - Type: FEATURE
 - Change class: S1
 - Owner: HUMAN LEAD
@@ -125,11 +125,33 @@ Không dùng.
 
 ## Result
 
-- Main changes:
-- Tests: <bảng AC → test>
-- Diff + / − (app, test):
-- Helper mới (đã tìm, lý do không tái dùng):
-- Review:
+- Main changes: `render.py` mới (segment video-only có cache, camera / parallax, ghép `xfade` / `concat`, mix giọng + nhạc `sidechaincompress`, `loudnorm` hai lượt, burn phụ đề); lệnh CLI `render`; trường root `music` trong `shots.py` (validate chung qua `_asset`); `animatic.py` tách `run_ffmpeg`, `srt_cues`, `subtitle_filter` dùng chung (key cache animatic không đổi); README mục Render.
+- IMPLEMENTER: `codex exec` (model `gpt-6.1-sol`, effort high, sandbox `workspace-write`), 1 lượt, khoảng 81k tokens, 0 vòng sửa.
+- Tests (`python -m pytest -q`: 65 passed):
+
+  | AC | Test |
+  |---|---|
+  | AC1 | `test_shots.py::test_invalid_music_without_output` (4 ca × `animatic` / `render`) |
+  | AC2, AC5, AC6 | `test_render.py::test_timeline_format_subtitles_and_silence` (4 tổ hợp cut / crossfade: định dạng, thời lượng, pha trộn giữa crossfade, ranh giới cut đúng frame, SRT, pixel phụ đề) |
+  | AC3 | `test_render.py::test_camera_direction_and_cover` (push / pull, pan trái / phải, static) |
+  | AC4 | `test_render.py::test_parallax_layers_move_at_different_speeds` |
+  | AC7–AC9 | `test_render.py::test_loudness_ducking_resume_pcm_and_atomic_output` (có / không nhạc: `ebur128`, ducking 880 Hz trước `loudnorm`, `built=0`, PCM sha256, đổi camera → `built=1`, lỗi encode cuối giữ output cũ) |
+  | AC10 | `test_render.py::test_animatic_cache_identity_and_music_ignored` + test animatic hiện có |
+  | AC11 | full suite; guard `_no_real_services` |
+  | AC12 | `node scripts/quality-gate.mjs` PASS trong env `animation-studio`; CI: xem PR |
+
+- Chạy tay (ORCHESTRATOR), asset tổng hợp 1920×1080, 6 shot × 5,5 s (đủ 6 kiểu camera, parallax 3 layer, 3 crossfade, phụ đề có dấu, giọng sine 4,5 s / shot, nhạc 20 s lặp):
+  - `film.mp4` 1920×1080, 30/1, h264 + aac, 33,000 s (kỳ vọng 33,0); SRT khớp ranh giới 5,5 s; integrated −16,0 LUFS.
+  - Frame trích ra: push / pull / pan đúng hướng, giữa crossfade là ảnh pha trộn, cut đúng ranh giới, parallax layer trên trôi nhiều hơn layer dưới, dấu tiếng Việt đúng.
+  - Rung camera đo bằng tương quan chéo giữa các frame (dòng 150): pan dịch 0 → ~3 px / frame theo smoothstep, không đảo chiều; tốc độ dao động ±0,4 px giữa các frame (bước 0,5 px output do canvas 2×); shot `static` nhiễu nền 0,05 px.
+  - Thời gian render 33 s phim: 2 phút 20 giây (1 thread); đổi layer 1 shot: `built=1 reused=5`, 1 phút; PCM sha256 giống nhau giữa hai lần render.
+- Diff + / − (app, test): app +195 / −25; test +216 / −7; README +13.
+- Helper mới (đã tìm, lý do không tái dùng): tìm bằng `rg -n 'def |loudnorm|sidechain|srt|ffmpeg' src tests`. Tách chung: `run_ffmpeg`, `srt_cues`, `subtitle_filter` (từ `build_animatic` / `_run`), `shots._asset`. Mới: `render._segment` (animatic pad + có audio; render cần cover, chuyển động, video-only), `render._audio` (chưa có mixer / ducking / loudnorm), `build_render`; helper test `frame`, `box`, `pcm`.
+- Review: ORCHESTRATOR review diff-first; không có finding chặn. Nhỏ, không sửa: `build_render` đọc lại `shots.json` để lấy `music` (đã validate trong `load_shots`).
 - Important findings / decisions:
-- Known limitations:
+  - Chống rung: upscale lanczos lên canvas 3840×2160 (parallax 4608×2592) một lần rồi loop; `zoompan` (push / pull / pan) hoặc `crop` theo frame (parallax) trên canvas đó, rồi scale về 1080p.
+  - Encode giữ 1 thread (`VIDEO` của animatic, `-filter_complex_threads 1`).
+  - Ducking: `sidechaincompress` threshold 0,005, ratio 20; đo trong test giảm khoảng 23 dB.
+  - Asset thử đầu tiên của ORCHESTRATOR có layer PNG trong suốt hoàn toàn (`drawbox` không đặt alpha) nên shot parallax chỉ thấy nền; tạo lại asset thì đúng. Đây là limitation đã ghi ở P1a.2; đề xuất P1a.4 cảnh báo layer có alpha = 0 toàn bộ.
+- Known limitations: biên độ / easing / thời lượng crossfade cố định; ảnh không 16:9 bị crop; dao động tốc độ ±0,4 px khi pan (nếu HUMAN LEAD thấy giật ở P1a.4 thì nâng canvas lên 4×, đổi lại chậm hơn); resume chỉ tái dùng segment video, audio và encode cuối luôn chạy lại.
 - PR:

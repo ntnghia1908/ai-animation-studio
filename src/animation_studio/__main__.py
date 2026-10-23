@@ -1,4 +1,4 @@
-"""CLI: python -m animation_studio {import-story,import-assets,animatic}."""
+"""CLI: python -m animation_studio {import-story,import-assets,animatic,render}."""
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ from pathlib import Path
 from .assets import import_assets
 from .animatic import build_animatic
 from .config import resolve_workspace
+from .render import build_render
 from .story import import_story
 from .workspace import UserError, validate_project_id
 
@@ -38,6 +39,7 @@ def _parser() -> argparse.ArgumentParser:
     a.add_argument("--model")
     a.add_argument("--declared-cost-usd", type=float, default=0)
     sub.add_parser("animatic", help="build a static animatic from shots.json").add_argument("project")
+    sub.add_parser("render", help="render camera motion, transitions and mixed audio").add_argument("project")
     return p
 
 
@@ -55,8 +57,9 @@ def main(argv: list[str] | None = None) -> int:
             added, skipped = import_assets(workspace, args.project, args.kind, args.files, meta)
             print(f"assets added={added} skipped={skipped}")
         else:
-            built, reused, path = build_animatic(workspace, args.project)
-            print(f"animatic built={built} reused={reused} -> {path}")
+            builder = build_render if args.command == "render" else build_animatic
+            built, reused, path = builder(workspace, args.project)
+            print(f"{args.command} built={built} reused={reused} -> {path}")
     except UserError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1

@@ -23,7 +23,7 @@ def test_output_subtitles_layers_and_resume(shot_project, capsys, monkeypatch):
                   transition="crossfade", subtitle="Chồng lớp và nhịp kể."),
              dict(id="s3", image=assets[0], duration_s=0.5)]
     atomic_write_json(pdir / "shots.json", {"version": 1, "shots": shots})
-    calls, real_run = [], animatic._run
+    calls, real_run = [], animatic.run_ffmpeg
 
     def record(args, cwd=None):
         calls.append(args)
@@ -31,7 +31,7 @@ def test_output_subtitles_layers_and_resume(shot_project, capsys, monkeypatch):
             assert (cwd / "fonts").resolve() == animatic.FONTS
         real_run(args, cwd)
 
-    monkeypatch.setattr(animatic, "_run", record)
+    monkeypatch.setattr(animatic, "run_ffmpeg", record)
     args = ["--workspace", str(ws), "animatic", "p1"]
     assert main(args) == 0
     assert "animatic built=3 reused=0 ->" in capsys.readouterr().out
@@ -89,14 +89,14 @@ def test_no_subtitles_and_failed_final_keeps_output(shot_project, monkeypatch):
     _, _, out = animatic.build_animatic(ws, "p1")
     assert (out.parent / "subtitles.srt").read_bytes() == b""
     before = out.read_bytes()
-    real_run = animatic._run
+    real_run = animatic.run_ffmpeg
 
     def fail_final(args, cwd=None):
         if args[-1] == "animatic.mp4":
             raise UserError("simulated final encode failure")
         real_run(args, cwd)
 
-    monkeypatch.setattr(animatic, "_run", fail_final)
+    monkeypatch.setattr(animatic, "run_ffmpeg", fail_final)
     with pytest.raises(UserError, match="simulated"):
         animatic.build_animatic(ws, "p1")
     assert out.read_bytes() == before
