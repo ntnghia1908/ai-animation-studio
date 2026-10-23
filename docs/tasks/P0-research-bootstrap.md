@@ -100,4 +100,5 @@ Không dùng.
   - Giá nhiều provider là nguồn thứ cấp.
   - Chưa đăng nhập Figma Education.
   - Finding ngoài scope: `scripts/product-check.mjs` của kit có lỗi regex (`\\.`, `\\n` trong regex literal) nên luôn FAIL. Báo HUMAN LEAD, không sửa.
-- PR: xem PR của branch `feature/p0-research-bootstrap`.
+- HUMAN LEAD review (2026-10-23): chấp nhận research + Option A; tách P1 thành P0.1 → P1a → P1b → `docs/decisions/ADR-001-mvp-architecture-and-phasing.md`. D-14 vẫn mở.
+- PR: #1, branch `feature/p0-research-bootstrap`.
