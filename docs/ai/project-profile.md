@@ -3,7 +3,7 @@
 | Metadata | Value |
 |---|---|
 | Status | CURRENT |
-| Project stage | P0 đã review (2026-10-23); P0.1 hoàn tất (PR #3); boundary P1a ACCEPTED (2026-10-23), P1a.1–P1a.3 đã implement; sau đó P1b theo ADR-001 |
+| Project stage | P0 đã review (2026-10-23); P0.1 hoàn tất (PR #3); boundary P1a ACCEPTED (2026-10-23), P1a.1–P1a.3 và P1a.4 Phần A đã implement; sau đó P1b theo ADR-001 |
 
 Canonical owner cho: project là gì, authority order, module map, project policy, integration mechanism, execution profile được phép, setup và Test policy.
 
@@ -33,7 +33,7 @@ Canonical owner cho: project là gì, authority order, module map, project polic
 
 ## 3. Module map
 
-Các module M1–M10 đều **planned**. P1a.1–P1a.3 mới có các file phẳng cho import, animatic và render (bảng dưới). Hướng: Option A (ADR-001). Ranh giới chi tiết ở `docs/architecture/ARCHITECTURE_PROPOSAL.md` §7 vẫn là đề xuất; chỉ tạo module khi vertical slice cần (ADR-001 A3). P1a chỉ dùng phần nhỏ: workspace, import truyện / asset, shots, animatic, render (`docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md` §3).
+Các module M1–M10 đều **planned**. P1a.1–P1a.4 mới có các file phẳng cho import, animatic, render và QC output (bảng dưới). Hướng: Option A (ADR-001). Ranh giới chi tiết ở `docs/architecture/ARCHITECTURE_PROPOSAL.md` §7 vẫn là đề xuất; chỉ tạo module khi vertical slice cần (ADR-001 A3). P1a chỉ dùng phần nhỏ: workspace, import truyện / asset, shots, animatic, render (`docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md` §3).
 
 | Path (đề xuất) | Vai trò | Trạng thái | Rule riêng |
 |---|---|---|---|
@@ -42,7 +42,8 @@ Các module M1–M10 đều **planned**. P1a.1–P1a.3 mới có các file phẳ
 | `src/animation_studio/assets.py` | import ảnh / audio + manifest (FR-008) | implemented (P1a.1) | lô all-or-nothing |
 | `src/animation_studio/shots.py` | đọc + validate `shots.json` v1 (schema: `docs/tasks/P1a.2-shots-animatic.md`) | implemented (P1a.2) | validate toàn bộ trước khi ghi output |
 | `src/animation_studio/animatic.py`, `fonts/` | animatic tĩnh: segment / shot (cache theo key), concat, phụ đề Be Vietnam Pro (OFL); helper FFmpeg / SRT / burn phụ đề dùng chung | implemented (P1a.2) | — |
-| `src/animation_studio/render.py` | render phim: camera push / pull / pan, parallax 2–3 layer, crossfade, nhạc nền ducking, `loudnorm` −16 LUFS (quyết định: `docs/tasks/P1a.3-motion-render.md`) | implemented (P1a.3) | audio tất định (AC-006) |
+| `src/animation_studio/render.py` | render phim: camera push / pull / pan, parallax 2–3 layer, crossfade, nhạc nền ducking, `loudnorm` −16 LUFS (quyết định: `docs/tasks/P1a.3-motion-render.md`); segment dựng song song (P1a.4) | implemented (P1a.3, P1a.4) | audio tất định (AC-006) |
+| `src/animation_studio/qc.py` | QC output theo boundary P1a §5 → `render/qc.json`; lệnh `check` (quyết định: `docs/tasks/P1a.4-output-qc-pilot.md`) | implemented (P1a.4) | không sửa `film.mp4` |
 | `src/animation_studio/story/` | M1 Story Library: nguồn truyện, provenance, quyền sử dụng | planned | REQ-001; decision chưa có |
 | `src/animation_studio/script/` | M2 AI Screenwriter: cải biên, scene / shot list | planned | REQ-001 |
 | `src/animation_studio/bible/` | M3 Character & Visual Bible | planned | REQ-001 |
@@ -123,7 +124,7 @@ Cách chọn:
 - Máy dev hiện tại (2026-10-23): laptop Windows 11, Intel Iris Xe (không có GPU NVIDIA), 16 GB RAM, Node 24, Python 3.13, FFmpeg build 2026-09, WSL Ubuntu (đang dừng). Chỉ dùng để phát triển. Production / GPU worker sẽ chạy trên server; cấu hình server chưa được xác nhận cho project này (`docs/research/PRODUCTION_COST_BENCHMARK.md` §Hardware).
 - Môi trường Python trên server: conda env `animation-studio`, Python 3.12 (D-04, HUMAN LEAD 2026-10-23). Packaging, dependency và lệnh test: `docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md` §3, §6.
 
-CLI: `python -m animation_studio {import-story,import-assets,animatic,render}`; workspace `~/animation-studio-data` (`config.toml`, P1a-1).
+CLI: `python -m animation_studio {import-story,import-assets,animatic,render,check}`; workspace `~/animation-studio-data` (`config.toml`, P1a-1).
 
 Framework checker: `node scripts/framework-check.mjs`.
 

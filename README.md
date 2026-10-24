@@ -57,6 +57,20 @@ render loops/trims it and ducks it under voices. Animatic ignores this field.
 Output: `<project>/render/{film.mp4, subtitles.srt, segments/}` (1080p H.264/AAC,
 30 fps, target −16 LUFS). Unchanged video segments are reused; the cache is disposable.
 
+## Kiểm output
+
+`render` tự chạy QC và in kết quả; chi tiết nằm ở `<project>/render/qc.json`.
+Để kiểm lại phim hiện có:
+
+```bash
+python -m animation_studio check my-story
+```
+
+`check` trả exit 2 nếu QC FAIL, 0 nếu đạt (có thể có WARN / SKIP), 1 nếu input lỗi.
+QC kiểm định dạng, thời lượng 30–60 s, phụ đề, khung đen, đứng hình, âm lượng và alpha.
+Tái tạo được so giữa hai lần `render` cùng input; `check` giữ kết quả so trước đó.
+Ảnh hoàn toàn trong suốt vẫn được nhập, kèm cảnh báo trên stderr.
+
 ## Test
 
 ```bash

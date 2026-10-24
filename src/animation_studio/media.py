@@ -9,6 +9,27 @@ from pathlib import Path
 from .workspace import UserError
 
 
+def _ffmpeg_bytes(args: list[str]) -> bytes:
+    """Decode binary media; run_ffmpeg is intended for text measurement logs."""
+    try:
+        proc = subprocess.run(["ffmpeg", "-v", "error", *args], capture_output=True, timeout=240)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise UserError(f"ffmpeg failed: {exc}") from exc
+    if proc.returncode:
+        raise UserError(f"ffmpeg failed: {proc.stderr.decode(errors='replace').strip()}")
+    return proc.stdout
+
+
+def fully_transparent(path: Path) -> bool:
+    """Only decode alpha-capable image formats; retain even tiny 16-bit alpha."""
+    fmt = probe(path, "image")["pix_fmt"]
+    if not fmt.startswith(("rgba", "bgra", "argb", "abgr", "yuva", "gbrap", "ya", "pal8")):
+        return False
+    alpha = _ffmpeg_bytes(["-i", str(path), "-vf", "format=rgba64le,alphaextract",
+                           "-frames:v", "1", "-pix_fmt", "gray16le", "-f", "rawvideo", "-"])
+    return bool(alpha) and not any(alpha)
+
+
 def _ffprobe(path: Path) -> dict:
     try:
         proc = subprocess.run(

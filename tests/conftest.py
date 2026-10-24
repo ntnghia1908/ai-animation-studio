@@ -41,6 +41,8 @@ def make_png(tmp_path):
         path.parent.mkdir(exist_ok=True)
         fmt = "rgba" if alpha else "rgb24"
         source = f"color=c={color}:s=64x48"
+        if alpha:
+            source += ",format=rgba"  # Preserve color's alpha before lavfi chooses yuv420p.
         if detail:
             source += ",drawbox=x=16:y=16:w=8:h=8:color=lime:t=fill"
         if patch:
