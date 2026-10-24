@@ -12,17 +12,16 @@ Ngân sách token của file: xem `docs/ai/workflow.md` §10.
 
 - P0 đã được HUMAN LEAD review (2026-10-23). Research và Option A được chấp nhận. Thứ tự P0.1 → P1a → P1b (`docs/decisions/ADR-001-mvp-architecture-and-phasing.md`).
 - P0.1 hoàn tất (PR #3, `98fdf00`). Gate: `node scripts/quality-gate.mjs`; CI "Quality" chạy trên mọi PR.
-- Boundary P1a ACCEPTED (2026-10-23): `docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md`. P1a.1 (PR #6), P1a.2 (PR #8), P1a.3 (PR #9) đã merge. P1a.4 Phần A (QC output + render song song) READY: `docs/tasks/P1a.4-output-qc-pilot.md`; Phần B (pilot "Tổ kiến và nhà ở") có bản xem trước, chờ chạy thật + HUMAN LEAD chấm.
+- Boundary P1a ACCEPTED (2026-10-23): `docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md`. P1a.1–P1a.4 đã merge (PR #6, #8, #9, #10). Pilot "Tổ kiến và nhà ở" QC PASS 9/9; HUMAN LEAD 2026-10-24: "Pilot coi như ổn" (không chấm điểm chi tiết) — Result `docs/tasks/P1a.4-output-qc-pilot.md`. P1a đạt exit gate, chờ HUMAN LEAD đóng.
 - Làm việc trên server; laptop chỉ là máy dev.
 
 ## Next proposed action
 
 PROPOSED, không authorize implementation:
 
-1. HUMAN LEAD merge PR P1a.4 Phần A.
-2. Chạy pilot thật trên server: `bash ~/animation-studio-pilot/to-kien/run.sh` (giọng audiobook mặc định; `VOICE=piper` cho bản TTS), xem `film.mp4`, chấm 5 tiêu chí boundary §5.
-3. ORCHESTRATOR ghi kết quả Phần B vào Result P1a.4 (PR docs riêng); đạt → đề xuất đóng P1a, mở P1b; không đạt → contract P1a.5.
-4. HUMAN LEAD (tùy chọn) bật required status check "Quality" cho `main`; gửi báo lỗi `product-check.mjs` lên kit.
+1. HUMAN LEAD merge PR docs kết quả pilot P1a.4 → P1a đóng.
+2. Session mới: ORCHESTRATOR soạn boundary P1b (`docs/decisions/P1b-…-AUTHORIZATION-DRAFT.md`) theo ưu tiên HUMAN LEAD chọn trong `docs/roadmap/IMPLEMENTATION_ROADMAP.md` §P1b. Đề xuất: TTS local (D-06) + pilot đầy đủ 60–90 s (D-09, D-12) trước — không cần GPU / chi tiêu. Server hiện không có GPU NVIDIA (ảnh hưởng D-07).
+3. HUMAN LEAD (tùy chọn) bật required status check "Quality" cho `main`; gửi báo lỗi `product-check.mjs` lên kit.
 
 ## Open decisions
 
