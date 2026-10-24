@@ -170,7 +170,7 @@ Asset (HUMAN LEAD giao ORCHESTRATOR quyết giọng + nhạc):
 **Còn chờ HUMAN LEAD:**
 
 1. ~~Duyệt kịch bản, ảnh, `config.toml`, công cụ tạo ảnh (ChatGPT)~~ (xong).
-2. Chạy pilot thật sau khi Phần A merge: `bash ~/animation-studio-pilot/to-kien/run.sh` (`VOICE=piper` cho bản TTS), xem phim, chấm 5 tiêu chí.
+2. ~~Chạy pilot thật sau khi Phần A merge, xem phim, chấm 5 tiêu chí~~ (xong 2026-10-24, xem Result).
 
 Media pilot và `film.mp4` chỉ nằm trong workspace `~/animation-studio-data`, không commit.
 
@@ -178,8 +178,8 @@ Media pilot và `film.mp4` chỉ nằm trong workspace `~/animation-studio-data`
 
 Không chạm database, security model hay public API contract (CLI nội bộ). Manual test Phần A là điểm danh; Phần B là gate đóng P1a.
 
-- [ ] Phần A: `render` một project, đọc dòng `qc …` và `qc.json`; `check` trả exit 2 khi phim < 30 s; render nhanh hơn rõ trên server.
-- [ ] Phần B: xem `animatic.mp4` rồi `film.mp4` của pilot, chấm 5 tiêu chí.
+- [x] Phần A: `render` một project, đọc dòng `qc …` và `qc.json`; `check` trả exit 2 khi phim < 30 s; render nhanh hơn rõ trên server.
+- [x] Phần B: xem `film.mp4` của pilot (HUMAN LEAD 2026-10-24: "coi như ổn").
 
 ## Handoff
 
@@ -213,6 +213,10 @@ Không dùng.
   - `freezedetect` dùng `n=-70dB`: −60 dB báo nhầm đoạn đầu / cuối easing của `push_in` 3 s trên ảnh thưa.
   - Song song chỉ tăng tốc bước segment (~2,3× toàn lệnh trên pilot); phần còn lại chủ yếu là encode cuối (`xfade` + burn phụ đề, 1 thread) ~75 s và QC 17 s.
   - Lỗi trong một worker: chờ mọi worker xong, raise lỗi của shot đầu tiên theo thứ tự; segment thành công giữ trong cache.
-- Pilot (Phần B): bản xem trước đã có (`~/animation-studio-pilot/to-kien/preview/`), chưa chạy trên workspace thật, chưa có điểm HUMAN LEAD.
+- Pilot (Phần B), AC12–AC13:
+  - Chạy `run.sh` (giọng audiobook) trên workspace thật `~/animation-studio-data`, project `to-kien`, 2026-10-24 sau merge PR #10: 8 shot, 59,9 s, 1 shot `parallax` 3 layer, 4 crossfade, phụ đề tiếng Việt, giọng audiobook thật, nhạc nền.
+  - `render/qc.json`: `overall` PASS; 9/9 mục PASS — `format` 1920×1080 30/1 h264 + aac; `duration_match` / `duration_range` 59,9 s; `subtitles` 8 cue khớp shot; `black` không có; `freeze` chỉ 44,6–50,47 s nằm trong shot `static` `s7-sam-hoi`; `loudness` −16,0 LUFS; `reproducible` PASS (lần render thứ hai, `audio_pcm_sha256` `ac462f9b…`); `layer_alpha` không có cảnh báo. Không có WARN.
+  - HUMAN LEAD xem phim (gửi qua điện thoại) và kết luận 2026-10-24 (chat): "Pilot coi như ổn". HUMAN LEAD không chấm điểm 1–5 cho từng tiêu chí; kết luận này được ghi là HUMAN LEAD chấp nhận pilot đạt gate boundary §5, không có điểm số chi tiết.
+  - Kết luận: Phần B đạt → ORCHESTRATOR đề xuất đóng P1a; P1b cần boundary riêng (ADR-001 A4), chưa authorize.
 - Known limitations: encode cuối vẫn 1 thread (bước chậm nhất; tăng thread không ảnh hưởng AC-006 nhưng cần task riêng); QC `black` không miễn cảnh tối; ngưỡng QC cố định.
 - PR: https://github.com/ntnghia1908/ai-animation-studio/pull/10
