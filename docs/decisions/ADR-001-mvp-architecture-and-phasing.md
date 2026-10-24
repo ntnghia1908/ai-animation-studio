@@ -51,9 +51,9 @@ Mỗi phase cần HUMAN LEAD chấp thuận boundary riêng. ADR này không aut
 | D-14 | Phê chuẩn P0 single-agent | **ACCEPTED** (HUMAN LEAD 2026-10-23) |
 | D-04 | Runtime / env / test command | **ACCEPTED** (HUMAN LEAD 2026-10-23): conda env `animation-studio`, Python 3.12, hatchling src-layout, `python -m pytest -q` (P1a boundary §6) |
 | D-08 | Truyện + asset cho P1a / pilot | **ACCEPTED một phần** (HUMAN LEAD 2026-10-23): truyện Liêu Trai ngắn để thử; nguồn và quyền HUMAN LEAD cung cấp trước P1a.4. Không chặn P1a.1–P1a.3 (dùng asset tổng hợp). Cập nhật HUMAN LEAD 2026-10-23: pilot dùng truyện "Tổ kiến và nhà ở" (*Báo Ứng Hiện Đời* tập 1, Cư sĩ Quả Khanh, Hạnh Đoan dịch) thay truyện Liêu Trai; quyền bản dịch / audiobook chưa xác nhận → chỉ demo nội bộ (`docs/tasks/P1a.4-output-qc-pilot.md`) |
-| D-06 | TTS | Hoãn: P1a chỉ nhập audio; TTS xét ở P1b |
-| D-09 | Số shot pilot | Hoãn: P1a dùng 5–8 shot; pilot đầy đủ xét sau |
-| D-12 | Phong cách hình ảnh | Hoãn: P1a dùng ảnh nhập tay |
+| D-06 | TTS | Hoãn: P1a chỉ nhập audio. P1b-1 (HUMAN LEAD 2026-10-24): chốt sau experiment E4 (`docs/decisions/P1b-1-TTS-FULL-PILOT-AUTHORIZATION-DRAFT.md` §7) |
+| D-09 | Số shot pilot | P1a dùng 5–8 shot. **ACCEPTED** (HUMAN LEAD 2026-10-24): pilot đầy đủ 12–16 shot, 60–90 s (`docs/decisions/P1b-1-TTS-FULL-PILOT-AUTHORIZATION-DRAFT.md` §7) |
+| D-12 | Phong cách hình ảnh | P1a dùng ảnh nhập tay. **ACCEPTED** (HUMAN LEAD 2026-10-24): giữ 2D Á Đông như P1a + trang style ngắn (`docs/decisions/P1b-1-TTS-FULL-PILOT-AUTHORIZATION-DRAFT.md` §7) |
 | D-05 | Web stack + security | Hoãn tới P1b (không có Web UI ở P1a) |
 | D-07 | GPU server | Hoãn tới P1b (local AI) |
 | D-10 | Figma Education trong sản xuất | Hoãn tới P1b |

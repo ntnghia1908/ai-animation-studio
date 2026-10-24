@@ -43,8 +43,8 @@ CLI đang mở (Claude Code hoặc Codex) tự đề xuất mình là ORCHESTRAT
 
 ## Project boundary
 
-- Giai đoạn hiện tại: P0 đã review; P0.1 (checker, quality gate, CI) đã xong (PR #3). Boundary **P1a — vertical slice** ACCEPTED (2026-10-23); chưa có task P1a nào được duyệt (chi tiết: `docs/ai/project-profile.md`).
-- Repository chưa có source code ứng dụng. Hướng kiến trúc: Option A (`docs/decisions/ADR-001-mvp-architecture-and-phasing.md`). Mọi module M1–M10 chỉ là **planned**; không xây trước khi vertical slice cần (ADR-001 A3).
-- Boundary đã duyệt: P0.1 (`docs/decisions/P0.1-QUALITY-GATE-AUTHORIZATION-DRAFT.md`, hoàn tất) và P1a (`docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md`, ACCEPTED). Chỉ tạo/sửa source, test, dependency hay config ứng dụng trong boundary P1a và theo task contract đã duyệt. Thứ tự: P0.1 → P1a → P1b (ADR-001 A4). Quality gate: `node scripts/quality-gate.mjs`.
+- Giai đoạn hiện tại: P0 đã review; P0.1 (checker, quality gate, CI) đã xong (PR #3). P1a (vertical slice) đã đóng. Boundary **P1b-1 — TTS local + pilot đầy đủ** ACCEPTED (2026-10-24); chưa có task P1b-1 nào được duyệt (chi tiết: `docs/ai/project-profile.md`).
+- Source code ứng dụng hiện chỉ có các file phẳng của P1a trong `src/animation_studio/` (module map: `docs/ai/project-profile.md` §3). Hướng kiến trúc: Option A (`docs/decisions/ADR-001-mvp-architecture-and-phasing.md`). Mọi module M1–M10 chỉ là **planned**; không xây trước khi vertical slice cần (ADR-001 A3).
+- Boundary đã duyệt: P0.1 (`docs/decisions/P0.1-QUALITY-GATE-AUTHORIZATION-DRAFT.md`, hoàn tất) P1a (`docs/decisions/P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md`, hoàn tất), P1b-1 (`docs/decisions/P1b-1-TTS-FULL-PILOT-AUTHORIZATION-DRAFT.md`, ACCEPTED). Chỉ tạo/sửa source, test, dependency hay config ứng dụng trong boundary P1b-1 và theo task contract đã duyệt. Thứ tự: P0.1 → P1a → P1b-1 → P1b-2 → P1b-3 (ADR-001 A4, P1b-1 §1). Quality gate: `node scripts/quality-gate.mjs`.
 - Không gọi API trả phí, không mua/đăng ký dịch vụ, không đăng nội dung lên YouTube khi chưa có HUMAN LEAD approval rõ ràng.
 - Repository là public: không commit media nguồn có bản quyền của bên thứ ba (vd video tham khảo), credential hay token.

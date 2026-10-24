@@ -2,13 +2,14 @@
 
 | Metadata | Value |
 |---|---|
-| Status | PROPOSED — chờ HUMAN LEAD trả lời §7 |
+| Status | ACCEPTED |
+| Accepted by | HUMAN LEAD, 2026-10-24 (§7 đã trả lời; D-06 chốt sau E4) |
 | Date | 2026-10-24 |
 | Basis | `docs/decisions/ADR-001-mvp-architecture-and-phasing.md` (A3 ràng buộc tăng trưởng, A4 thứ tự, A5 D-06 / D-09 / D-12 hoãn tới P1b) |
 | Requirement | `docs/product/requirements/REQ-001-animation-studio-mvp.md` (một phần, xem §8) |
 | Prerequisite | P1a đạt exit gate (`docs/tasks/P1a.4-output-qc-pilot.md` Result, PR #11) |
 
-Draft này **chưa authorize** implementation. Boundary chỉ có hiệu lực khi HUMAN LEAD chấp nhận và trả lời §7.
+Boundary có hiệu lực từ 2026-10-24. Mỗi task P1b-1 vẫn cần task contract được HUMAN LEAD duyệt trước khi implement. Engine TTS chỉ được thêm sau khi D-06 được chốt (§7).
 
 ## 1. Chia P1b
 
@@ -65,8 +66,8 @@ shots.json (lời kể / thoại theo shot, voice id)
    - tất định: cùng input → cùng audio PCM hash, giữ AC-006. Nếu engine đã chốt không tất định, task contract phải nêu cách xử lý (ví dụ chỉ hash file đã cache).
 3. **Mở rộng `shots.json`** để mang text / voice theo shot, tương thích ngược với file v1 của P1a.
 4. **QC cho phim dài hơn:** khoảng thời lượng hợp lệ của `duration_range` lấy từ cấu hình / project thay vì cố định 30–60 s; các mục QC khác giữ nguyên.
-5. **(Tùy chọn, §7 P1b-1-4)** tăng tốc encode cuối (hiện 1 thread, bước chậm nhất — Known limitation P1a.4), không đổi output.
-6. **Pilot đầy đủ** 60–90 s, 12–16 shot, chạy trên workspace thật `~/animation-studio-data`, theo truyện và phong cách chốt ở §7.
+5. **Tăng tốc encode cuối** (§7 P1b-1-4) (hiện 1 thread, bước chậm nhất — Known limitation P1a.4), không đổi output.
+6. **Pilot đầy đủ** 60–90 s, 12–16 shot, mở rộng "Tổ kiến và nhà ở" (chỉ demo nội bộ), phong cách theo D-12; chạy trên workspace thật `~/animation-studio-data`. Kèm trang style ngắn (D-12).
 7. Dependency: engine TTS đã chốt, đặt trong **optional extra** (ví dụ `[tts]`) để `pip install -e ".[dev]"` và CI không phải tải model. Weights tải về workspace / cache ngoài repo, không commit. Test dùng engine giả (fake), không tải model, không gọi mạng.
 8. Tài liệu: task contract, module map trong project-profile, current-state, README mục chạy `voice`.
 
@@ -92,17 +93,17 @@ shots.json (lời kể / thoại theo shot, voice id)
 
 Ngưỡng đề xuất: không mục nào < 3 và mục tổng thể ≥ 4. HUMAN LEAD có thể kết luận không chấm điểm như P1a.4; Result ghi rõ cách kết luận. Chưa đạt thì lặp lại trong P1b-1, chưa mở P1b-2.
 
-## 7. Decision cần HUMAN LEAD
+## 7. Decision của HUMAN LEAD (2026-10-24)
 
-| ID | Câu hỏi | Đề xuất ORCHESTRATOR |
+| ID | Câu hỏi | Quyết định |
 |---|---|---|
-| P1b-1-1 | Chấp nhận phạm vi §4 / §5 và exit gate §6 | Chấp nhận |
-| D-06 | Engine TTS | Chốt **sau E4** (task 1), dựa trên điểm HUMAN LEAD nghe; boundary này cho phép thêm đúng một engine đã chốt làm optional dependency. Nếu không engine local nào đạt: dùng audio nhập tay / thu âm cho pilot, TTS quay lại sau |
-| D-09 | Số shot pilot | 12–16 shot, 60–90 s (`docs/research/ANIMATION_WORKFLOW_RESEARCH.md`: nhịp 6–9 s/shot; vài shot là reframe của cùng ảnh) |
-| D-12 | Phong cách hình ảnh | Giữ 2D Á Đông như pilot P1a (ảnh HUMAN LEAD tạo bằng công cụ ngoài, ví dụ ChatGPT). Thêm một trang style ngắn (bảng màu, nét, tham chiếu nhân vật) để giữ nhất quán qua 12–16 shot; không sinh ảnh trong code |
-| P1b-1-2 | Truyện cho pilot | Hai lựa chọn: (a) mở rộng "Tổ kiến và nhà ở" lên 60–90 s — có sẵn ảnh / kịch bản, nhưng quyền bản dịch chưa xác nhận → chỉ demo nội bộ (D-08); (b) truyện mới có quyền rõ (ví dụ bản Liêu Trai HUMAN LEAD tự chuyển ngữ / public domain). ORCHESTRATOR nghiêng về (a) để tập trung đo TTS, trừ khi HUMAN LEAD muốn có phim đăng được |
-| P1b-1-3 | Giọng nhân vật | 1 giọng kể + 2 giọng nhân vật lấy từ voice có sẵn của engine (không clone) |
-| P1b-1-4 | Tăng tốc encode cuối (§4 mục 5) | Đưa vào nếu render pilot 60–90 s quá 5 phút; nếu không thì bỏ |
+| P1b-1-1 | Phạm vi §4 / §5 và exit gate §6 | **ACCEPTED** như đề xuất |
+| D-06 | Engine TTS | **Chốt sau E4** (task P1b-1.1), dựa trên điểm HUMAN LEAD nghe. Boundary cho phép thêm đúng một engine đã chốt làm optional dependency. Nếu không engine local nào đạt: pilot dùng audio nhập tay / thu âm, TTS quay lại sau |
+| D-09 | Số shot pilot | **ACCEPTED**: 12–16 shot, 60–90 s (nhịp 6–9 s/shot; vài shot là reframe của cùng ảnh) |
+| D-12 | Phong cách hình ảnh | **ACCEPTED**: giữ 2D Á Đông như pilot P1a, ảnh HUMAN LEAD tạo bằng công cụ ngoài; thêm một trang style ngắn (bảng màu, nét, tham chiếu nhân vật). Không sinh ảnh trong code |
+| P1b-1-2 | Truyện cho pilot | **ACCEPTED**: mở rộng "Tổ kiến và nhà ở"; quyền bản dịch chưa xác nhận → chỉ demo nội bộ (D-08) |
+| P1b-1-3 | Giọng nhân vật | **ACCEPTED**: 1 giọng kể + 2 giọng nhân vật từ voice có sẵn của engine, không clone |
+| P1b-1-4 | Tăng tốc encode cuối | **ACCEPTED**: luôn làm (task P1b-1.3), không đổi output |
 
 ## 8. Truy vết tới REQ-001
 
@@ -119,10 +120,10 @@ Ngưỡng đề xuất: không mục nào < 3 và mục tổng thể ≥ 4. HUMA
 ## 9. Vận hành
 
 - `dual-agent`, Claude Code ORCHESTRATOR; IMPLEMENTER chọn theo task từ danh sách `docs/ai/project-profile.md` §7. Writer = 1.
-- Dự kiến 3–4 task, mỗi task một session:
+- Dự kiến 4 task, mỗi task một session:
   1. **P1b-1.1 E4** — chạy so sánh TTS ngoài repo, viết `TTS_E4_RESULTS.md`; HUMAN LEAD nghe, chốt D-06. Không sửa source app.
   2. **P1b-1.2 `voice`** — adapter engine, mở rộng `shots.json`, cache, manifest, QC `duration_range` cấu hình được.
-  3. **P1b-1.3 (tùy chọn)** — tăng tốc encode cuối.
+  3. **P1b-1.3** — tăng tốc encode cuối.
   4. **P1b-1.4 pilot đầy đủ** — kịch bản 12–16 shot, ảnh, chạy pilot, QC, HUMAN LEAD chấm.
 - Ngân sách diff ≤ khoảng 800 dòng app / PR.
 - Branch `feature/p1b1-<task>` (task E4: `docs/p1b1-e4-tts`); READY → push + PR; HUMAN LEAD merge.

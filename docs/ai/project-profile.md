@@ -3,7 +3,7 @@
 | Metadata | Value |
 |---|---|
 | Status | CURRENT |
-| Project stage | P0 đã review (2026-10-23); P0.1 hoàn tất (PR #3); boundary P1a ACCEPTED (2026-10-23), P1a.1–P1a.3 và P1a.4 Phần A đã implement; sau đó P1b theo ADR-001 |
+| Project stage | P0 đã review (2026-10-23); P0.1 hoàn tất (PR #3); P1a đóng (PR #6–#11); P1b chia P1b-1 → P1b-2 → P1b-3, boundary P1b-1 ACCEPTED (2026-10-24) |
 
 Canonical owner cho: project là gì, authority order, module map, project policy, integration mechanism, execution profile được phép, setup và Test policy.
 
@@ -21,7 +21,7 @@ Canonical owner cho: project là gì, authority order, module map, project polic
 
 ## 2. Authority order
 
-1. HUMAN LEAD decisions, approved task contracts và decision record `ACCEPTED` trong `docs/decisions/`. Hiện có: `docs/decisions/ADR-001-mvp-architecture-and-phasing.md` (ACCEPTED: Option A, ràng buộc tăng trưởng, thứ tự P0.1 → P1a → P1b, trạng thái D-01…D-14). `P0.1-QUALITY-GATE-AUTHORIZATION-DRAFT.md` (ACCEPTED, hoàn tất). `P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md` (ACCEPTED 2026-10-23). `P1-IMPLEMENTATION-AUTHORIZATION-DRAFT.md` đã `SUPERSEDED`.
+1. HUMAN LEAD decisions, approved task contracts và decision record `ACCEPTED` trong `docs/decisions/`. Hiện có: `docs/decisions/ADR-001-mvp-architecture-and-phasing.md` (ACCEPTED: Option A, ràng buộc tăng trưởng, thứ tự P0.1 → P1a → P1b, trạng thái D-01…D-14). `P0.1-QUALITY-GATE-AUTHORIZATION-DRAFT.md` (ACCEPTED, hoàn tất). `P1a-VERTICAL-SLICE-AUTHORIZATION-DRAFT.md` (ACCEPTED 2026-10-23, hoàn tất). `P1b-1-TTS-FULL-PILOT-AUTHORIZATION-DRAFT.md` (ACCEPTED 2026-10-24). `P1-IMPLEMENTATION-AUTHORIZATION-DRAFT.md` đã `SUPERSEDED`.
 2. `docs/ai/workflow.md`, `docs/ai/execution-profiles.md` và file này cho workflow / policy.
 3. Requirement `READY` trong `docs/product/requirements/` cho hành vi sản phẩm (READY ≠ authorization). REQ-001 hiện là `NEEDS_CLARIFICATION`.
 4. Source code và tests hiện hành (`src/animation_studio/`, `tests/`).
@@ -92,7 +92,7 @@ HUMAN LEAD giữ: scope, architecture, dependency, provider / chi tiêu, chính 
 
 Project chọn `task` (cần APPROVE TASK) hoặc `boundary` (HUMAN LEAD cấp Implementation Authorization Boundary một lần). Ghi lựa chọn trong `framework.config.json` và không tự đổi giữa phiên.
 
-Project này dùng `boundary` (`framework.config.json`). Boundary đã duyệt: P0.1 (hoàn tất); P1a (ACCEPTED 2026-10-23).
+Project này dùng `boundary` (`framework.config.json`). Boundary đã duyệt: P0.1 (hoàn tất); P1a (hoàn tất); P1b-1 (ACCEPTED 2026-10-24).
 
 ### Execution profile ưu tiên: native dual-agent
 
