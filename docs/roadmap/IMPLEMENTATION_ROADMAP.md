@@ -37,6 +37,8 @@ Chỉ xem xét **sau khi HUMAN LEAD xem video P1a**, theo thứ tự ưu tiên H
 - Router + ledger + budget guard; tích hợp provider trả phí (D-11, E6).
 - Pilot đầy đủ 60–90 s (D-09, D-12).
 
+HUMAN LEAD 2026-10-24 chọn cả năm hạng mục, chia ba boundary nối tiếp: P1b-1 (TTS + pilot), P1b-2 (local AI GPU + Review Studio), P1b-3 (router / premium) — `docs/decisions/P1b-1-TTS-FULL-PILOT-AUTHORIZATION-DRAFT.md` §1.
+
 Experiment E1–E8 (`docs/research/ANIMATION_WORKFLOW_RESEARCH.md` §9): E1 (FFmpeg camera / parallax) thực chất được kiểm trong P1a. Các experiment còn lại chạy khi chuẩn bị P1b, mỗi cái cần HUMAN LEAD cho phép.
 
 ## P2 — Local Animation
